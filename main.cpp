@@ -1,9 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <deepspeech.h>
+#include <portaudio.h>
 #include <vector>
 
-int main() {
+int check() {
     ModelState* ctx;
     bool scorer = true;
     char* speech;
@@ -41,6 +42,8 @@ int main() {
 
     //DS_FreeString(speech);
     DS_FreeModel(ctx);
+
+    std::cout << "PortAudio Version: " << Pa_GetVersion() << std::endl;
 
     return 0;
 }
