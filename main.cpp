@@ -1,9 +1,10 @@
 #include <iostream>
 #include <portaudio.h>
 #include <deepspeech.h>
+#include <whisper.h>
 
 #define SAMPLE_RATE 16000
-#define FRAMES_PER_BUFFER 512
+#define FRAMES_PER_BUFFER 512/3.2
 
 StreamingState* streamingState;
 
@@ -33,7 +34,7 @@ static int paTestCallback(
 	return paContinue;
 }
 
-int main() {
+int checks() {
 	// -----------DeepSpeech Stuff------------ //
 	ModelState* ctx;
 
@@ -87,6 +88,8 @@ int main() {
 		printf(" maxOutputChannels: %d\n", deviceInfo->maxOutputChannels);
 		printf(" defaultSampleRate: %f\n", deviceInfo->defaultSampleRate);
 	}
+
+	std::cout << "Default Input Device :: " << Pa_GetDefaultInputDevice() << std::endl;
 	/*
 	int inputDevice = 1;
 	int outputDevice = 3;
