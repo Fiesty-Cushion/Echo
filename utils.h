@@ -43,7 +43,7 @@ struct whisper_params {
     std::string font_path = "/System/Library/Fonts/Supplemental/Courier New Bold.ttf";
     std::string model = "D:/Projects/C++/Echo/Models/ggml-model-whisper-base.en.bin";
 
-    std::vector<std::string> fname_inp = { "D:/Projects/C++/Echo/Audio/audio/4507-16021-0012.wav" };
+    std::vector<std::string> fname_inp = { "D:/Projects/C++/Echo/Audio/Recording.wav" };
     std::vector<std::string> fname_out = {};
 };
 

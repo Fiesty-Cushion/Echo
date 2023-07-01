@@ -16,7 +16,7 @@ void whisper_print_segment_callback(struct whisper_context* ctx, struct whisper_
 
     const int n_segments = whisper_full_n_segments(ctx);
 
-    std::string speaker = "";
+    std::string speaker = "Me: ";
 
     int64_t t0 = 0;
     int64_t t1 = 0;
@@ -29,16 +29,8 @@ void whisper_print_segment_callback(struct whisper_context* ctx, struct whisper_
     }
 
     for (int i = s0; i < n_segments; i++) {
-        if (!params.no_timestamps || params.diarize) {
-            t0 = whisper_full_get_segment_t0(ctx, i);
-            t1 = whisper_full_get_segment_t1(ctx, i);
-        }
-
-        {
-            const char* text = whisper_full_get_segment_text(ctx, i);
-
-            printf("%s%s", speaker.c_str(), text);
-        }
+        const char* text = whisper_full_get_segment_text(ctx, i);
+        printf("%s%s", speaker.c_str(), text);
 
         // with timestamps or speakers: each segment on new line
         if (!params.no_timestamps || params.diarize) {
@@ -49,7 +41,7 @@ void whisper_print_segment_callback(struct whisper_context* ctx, struct whisper_
     }
 }
 
-int main(int argc, char** argv) {
+int ain(int argc, char** argv) {
     whisper_params params;
 
     struct whisper_context* ctx = whisper_init_from_file(params.model.c_str());
