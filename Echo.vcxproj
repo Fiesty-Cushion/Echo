@@ -22,6 +22,7 @@
     <ClCompile Include="common-sdl.cpp" />
     <ClCompile Include="common.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="pcm_stream.cpp" />
     <ClCompile Include="stream.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
