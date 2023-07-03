@@ -12,6 +12,8 @@ whisper_params wh_params;
 struct whisper_context* ctx = whisper_init_from_file(wh_params.model.c_str());
 whisper_full_params wh_full_params = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
 
+bool stopRequested = false;
+int count = 0;
 
 static int Pa_Callback(const void* inputBuffer, void* outputBuffer,
 	unsigned long framesPerBuffer,
@@ -19,6 +21,8 @@ static int Pa_Callback(const void* inputBuffer, void* outputBuffer,
 	PaStreamCallbackFlags statusFlags,
 	void* userData)
 {
+	if (stopRequested)
+		return paComplete;
 	const float* input = static_cast<const float*>(inputBuffer);
 
 	for (int i = 0; i < framesPerBuffer; i++)
@@ -26,13 +30,13 @@ static int Pa_Callback(const void* inputBuffer, void* outputBuffer,
 		pcm32.push_back(input[i]);
 	}
 	int size = pcm32.size();
-	if (size > 16000 * 3)
+	if (size / (16000 * 3) > count)
 	{
-
+		count++;
 		if (whisper_full(ctx, wh_full_params, pcm32.data(), size) != 0)
 		{
 			fprintf(stderr, "%s: failed to process audio\n", "Audio");
-			return -1;
+			return 6;
 		}
 		const int n_segments = whisper_full_n_segments(ctx);
 		for (int i = 0; i < n_segments; ++i)
@@ -43,6 +47,8 @@ static int Pa_Callback(const void* inputBuffer, void* outputBuffer,
 			fflush(stdout);
 		}
 	}
+
+
 	return paContinue;
 }
 
@@ -54,7 +60,6 @@ static void Pa_CheckError(PaError err)
 		exit(EXIT_FAILURE);
 	}
 }
-
 
 int main()
 {
@@ -84,27 +89,23 @@ int main()
 	std::cout << "Listening... Press Enter to stop." << std::endl;
 	std::cin.ignore();
 
-	err = Pa_StopStream(stream);
-	if (err != paNoError)
-	{
+	stopRequested = true;
+	Pa_Sleep(5000);
+
+	// Forcefully stop the stream if it hasn't stopped yet
+	if (Pa_IsStreamActive(stream))
 		Pa_AbortStream(stream);
-		Pa_CloseStream(stream);
-		Pa_Terminate();
-		fprintf(stderr, "PortAudio Error: %s\n", Pa_GetErrorText(err));
-		return -1;
-	};
 
 	err = Pa_CloseStream(stream);
 	Pa_CheckError(err);
-
 	Pa_Terminate();
 
-	/*std::cout << "Recorded " << pcm32.size() << " samples." << std::endl;
+	std::cout << "Recorded " << pcm32.size() << " samples." << std::endl;
 
 	if (whisper_full(ctx, wh_full_params, pcm32.data(), pcm32.size()) != 0)
 	{
 		fprintf(stderr, "%s: failed to process audio\n", "Audio");
-		return -1;
+		return 6;
 	}
 
 	const int n_segments = whisper_full_n_segments(ctx);
@@ -115,7 +116,7 @@ int main()
 		printf("%s", text);
 		fflush(stdout);
 	}
-	std::cout << std::endl;*/
+	std::cout << std::endl;
 
 	pcm32.clear();
 	whisper_free(ctx);
