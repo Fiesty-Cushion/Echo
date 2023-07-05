@@ -42,15 +42,8 @@ struct whisper_params
 	std::string language = "en";
 	std::string prompt;
 	std::string font_path = "/System/Library/Fonts/Supplemental/Courier New Bold.ttf";
-	std::string model = "D:/Cpp/Echo/Models/ggml-model-whisper-base.en.bin";
+	std::string model = "D:/Projects/C++/Echo/Models/ggml-model-whisper-base.en.bin";
 
-	std::vector<std::string> fname_inp = { "D:/Projects/C++/Echo/Audio/Recording.wav" };
+	std::vector<std::string> fname_inp = {};
 	std::vector<std::string> fname_out = {};
-};
-
-struct whisper_print_user_data
-{
-	const whisper_params* params;
-
-	const std::vector<std::vector<float>>* pcmf32s;
 };

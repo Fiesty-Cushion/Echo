@@ -4,11 +4,14 @@
 #include "utils.h"
 #include <portaudio.h>
 #include <thread>
+#include <chrono>
+#include <iomanip>
 
 #define PA_SAMPLE_RATE WHISPER_SAMPLE_RATE
 #define PA_FRAMES_PER_BUFFER 512
 
 std::vector<float> pcm32;
+struct whisper_context* ctx = whisper_init_from_file("D:/Projects/C++/Echo/Models/ggml-model-whisper-base.en.bin");
 
 bool stopRequested = false;
 int count = 0;
@@ -28,25 +31,6 @@ static int Pa_Callback(const void* inputBuffer, void* outputBuffer,
 	{
 		pcm32.push_back(input[i]);
 	}
-	/*int size = pcm32.size();
-	if (size / (PA_SAMPLE_RATE * 3) > count)
-	{
-		count++;
-		if (whisper_full(ctx, wh_full_params, pcm32.data(), size) != 0)
-		{
-			fprintf(stderr, "%s: failed to process audio\n", "Audio");
-			return 6;
-		}
-		const int n_segments = whisper_full_n_segments(ctx);
-		for (int i = 0; i < n_segments; ++i)
-		{
-			const char* text = whisper_full_get_segment_text(ctx, i);
-
-			printf("%s\n", text);
-			fflush(stdout);
-		}
-	}*/
-
 
 	return paContinue;
 }
@@ -63,37 +47,46 @@ static void Pa_CheckError(PaError err)
 
 void Wh_Transcribe()
 {
+	auto start = std::chrono::high_resolution_clock::now();
 	whisper_params wh_params;
 	whisper_full_params wh_full_params = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
 	wh_full_params.print_progress = false;
-
-	struct whisper_context* ctx = whisper_init_from_file(wh_params.model.c_str());
 
 	while (!stopRequested)
 	{
 		long long int size = 0;
 		size = pcm32.size();
 		//printf("size : %d\n", size);
-		if (size / (PA_SAMPLE_RATE * 3) > count)
+		int bufferSize = PA_SAMPLE_RATE * 3;
+		if (size / (bufferSize) > count)
 		{
+			std::vector<float> pcmPortion(bufferSize);
+			//pcmPortion.resize(bufferSize);
+			//std::copy(pcm32.begin() + bufferSize * count, pcm32.begin() + bufferSize * (count + 1), pcmPortion.begin());
+			memcpy(pcmPortion.data(), pcm32.data() + bufferSize * count, sizeof(float) * bufferSize);
 			count++;
-			if (whisper_full(ctx, wh_full_params, pcm32.data(), size) != 0)
+
+			if (whisper_full(ctx, wh_full_params, pcmPortion.data(), bufferSize) != 0)
 			{
 				fprintf(stderr, "%s: failed to process audio\n", "Audio");
 				return;
 			}
+
 			const int n_segments = whisper_full_n_segments(ctx);
 			for (int i = 0; i < n_segments; ++i)
 			{
 				const char* text = whisper_full_get_segment_text(ctx, i);
-
+				auto end = std::chrono::high_resolution_clock::now();
+				double duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+				duration *= 1e-9;
 				printf("%s\n", text);
+				std::cout << "Time Elapsed: " << std::fixed << duration << std::setprecision(9) << "sec" << std::endl;
+				start = end;
 				fflush(stdout);
-			}
+			}	
+
 		}
 	}
-
-	whisper_free(ctx);
 }
 
 int main()
@@ -140,28 +133,6 @@ int main()
 	Pa_Terminate();
 
 	std::cout << "Recorded " << pcm32.size() << " samples." << std::endl;
-
-	whisper_params wh_params;
-	whisper_full_params wh_full_params = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
-	wh_full_params.print_progress = false;
-
-	struct whisper_context* ctx = whisper_init_from_file(wh_params.model.c_str());
-
-	if (whisper_full(ctx, wh_full_params, pcm32.data(), pcm32.size()) != 0)
-	{
-		fprintf(stderr, "%s: failed to process audio\n", "Audio");
-		return 6;
-	}
-
-	const int n_segments = whisper_full_n_segments(ctx);
-	for (int i = 0; i < n_segments; ++i)
-	{
-		const char* text = whisper_full_get_segment_text(ctx, i);
-
-		printf("%s", text);
-		fflush(stdout);
-	}
-	std::cout << std::endl;
 
 	pcm32.clear();
 	whisper_free(ctx);
