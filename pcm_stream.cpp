@@ -10,11 +10,16 @@
 #define PA_SAMPLE_RATE WHISPER_SAMPLE_RATE
 #define PA_FRAMES_PER_BUFFER 512
 
+std::vector<float> pcm32_old;
 std::vector<float> pcm32;
+std::vector<float> pcm32_new;
+
+
 struct whisper_context* ctx = whisper_init_from_file("D:/Projects/C++/Echo/Models/ggml-model-whisper-base.en.bin");
 
 bool stopRequested = false;
 int count = 0;
+bool isReadyForTranscription = false;
 
 static int Pa_Callback(const void* inputBuffer, void* outputBuffer,
 	unsigned long framesPerBuffer,
@@ -27,9 +32,39 @@ static int Pa_Callback(const void* inputBuffer, void* outputBuffer,
 		return paComplete;
 	const float* input = static_cast<const float*>(inputBuffer);
 
-	for (int i = 0; i < framesPerBuffer; i++)
+	//pcm32_new.insert(pcm32_new.begin()+count*framesPerBuffer, inputBuffer, inputBuffer+512);
+	for (int i = 0; i < framesPerBuffer; i++) 
 	{
-		pcm32.push_back(input[i]);
+		pcm32_new.insert(pcm32_new.begin() + (count * 512), 1, input[i]);
+	}
+	count++;
+	auto pcmNewSize = pcm32_new.size();
+	if (pcmNewSize >= 48000)
+	{
+		int samplesToTake = 48000;
+		//memcpy(pcm32.data(), pcm32_old.data() + 24000, sizeof(float) * 24000);
+		if (pcm32_old.size() > 0) // only runs on second iteration
+		{
+			for (int i = 0; i < samplesToTake; i++) {
+				pcm32[i] = pcm32_old[pcm32_old.size() - samplesToTake + i];
+			}
+		}
+		else {
+			for (int i = 0; i < samplesToTake; i++) {
+				pcm32.push_back(0);
+			}
+		}
+		auto pcmSize = pcm32.size();
+		for (int i = 0; i < pcmNewSize + samplesToTake -pcmSize; i++) {
+			pcm32.push_back(0);
+		}
+		//auto y = pcm32_new.size();
+		//memcpy(pcm32.data() + 24000, pcm32_new.data(), sizeof(float) * pcm32_new.size());
+		std::copy(pcm32_new.begin(), pcm32_new.begin()+pcmNewSize, pcm32.begin() + samplesToTake);
+		pcm32_old = pcm32; 
+		count = 0;
+		pcm32_new.clear();
+		isReadyForTranscription = true;
 	}
 
 	return paContinue;
@@ -49,24 +84,22 @@ void Wh_Transcribe()
 {
 	auto start = std::chrono::high_resolution_clock::now();
 	whisper_params wh_params;
-	whisper_full_params wh_full_params = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
+	whisper_full_params wh_full_params = whisper_full_default_params(WHISPER_SAMPLING_BEAM_SEARCH);
 	wh_full_params.print_progress = false;
 
 	while (!stopRequested)
 	{
-		long long int size = 0;
-		size = pcm32.size();
 		//printf("size : %d\n", size);
-		int bufferSize = PA_SAMPLE_RATE * 3;
-		if (size / (bufferSize) > count)
+		if (isReadyForTranscription)
 		{
-			std::vector<float> pcmPortion(bufferSize);
+			//std::vector<float> pcmPortion(bufferSize);
 			//pcmPortion.resize(bufferSize);
 			//std::copy(pcm32.begin() + bufferSize * count, pcm32.begin() + bufferSize * (count + 1), pcmPortion.begin());
-			memcpy(pcmPortion.data(), pcm32.data() + bufferSize * count, sizeof(float) * bufferSize);
-			count++;
+			//memcpy(pcmPortion.data(), pcm32.data() + bufferSize * count, sizeof(float) * bufferSize);
+			//count++;
 
-			if (whisper_full(ctx, wh_full_params, pcmPortion.data(), bufferSize) != 0)
+			isReadyForTranscription = false;
+			if (whisper_full(ctx, wh_full_params, pcm32.data(), pcm32.size()) != 0)
 			{
 				fprintf(stderr, "%s: failed to process audio\n", "Audio");
 				return;
@@ -83,13 +116,13 @@ void Wh_Transcribe()
 				std::cout << "Time Elapsed: " << std::fixed << duration << std::setprecision(9) << "sec" << std::endl;
 				start = end;
 				fflush(stdout);
-			}	
+			}
 
 		}
 	}
 }
 
-int main()
+int mainm()
 {
 	PaError err;
 	err = Pa_Initialize();
@@ -138,4 +171,3 @@ int main()
 	whisper_free(ctx);
 	return 0;
 }
-
