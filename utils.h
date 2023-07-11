@@ -46,7 +46,7 @@ struct whisper_params
 	std::string language = "en";
 	std::string prompt;
 	std::string font_path = "/System/Library/Fonts/Supplemental/Courier New Bold.ttf";
-	std::string model = "D:/Projects/C++/Echo/Models/ggml-model-whisper-base.en.bin";
+	std::string model = "./Models/ggml-model-whisper-base.en.bin";
 
 	std::vector<std::string> fname_inp = {};
 	std::vector<std::string> fname_out = {};
