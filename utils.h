@@ -4,6 +4,10 @@
 #include <thread>
 #include <vector>
 
+//static void Pa_CheckError(PaError err);
+
+void Wh_Transcribe();
+
 // command-line parameters
 struct whisper_params
 {

@@ -99,7 +99,7 @@ void Wh_Transcribe()
 			//count++;
 
 			isReadyForTranscription = false;
-			if (whisper_full(ctx, wh_full_params, pcm32.data(), pcm32.size()) != 0)
+			if (whisper_full(ctx, wh_full_params, pcm32_old.data(), pcm32_old.size()) != 0)
 			{
 				fprintf(stderr, "%s: failed to process audio\n", "Audio");
 				return;
@@ -122,7 +122,7 @@ void Wh_Transcribe()
 	}
 }
 
-int mainm()
+int mainn()
 {
 	PaError err;
 	err = Pa_Initialize();
