@@ -7,7 +7,7 @@
 #define LIGHTBLUE CLITERAL(Color) {229, 241, 251, 255}
 #define LIGHTGRAY CLITERAL(Color) {173, 173, 173, 255}
 
-int main() {
+int mainn() {
     // Initialization
     //--------------------------------------------------------------------------------------
     float screenWidth = 1000;
