@@ -1,14 +1,14 @@
 #include <iostream>
 #include <vector>
-#include "whisper.h"
-#include "utils.h"
-#include <portaudio.h>
 #include <thread>
 #include <chrono>
 #include <iomanip>
 #include <queue>
 #include <condition_variable>
 #include <mutex>
+#include "portaudio.h"
+#include "utils.h"
+#include "whisper.h"
 
 #define PA_SAMPLE_RATE WHISPER_SAMPLE_RATE
 #define PA_FRAMES_PER_BUFFER 512
