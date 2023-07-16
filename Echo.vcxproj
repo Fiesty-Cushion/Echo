@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="CallbackFactory.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="pcm_stream.cpp" />
@@ -28,6 +29,7 @@
   <ItemGroup>
     <ClInclude Include="Audio.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="CallbackFactory.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Modes.h" />
     <ClInclude Include="Transcriber.h" />

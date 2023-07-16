@@ -2,7 +2,7 @@
 
 Transcriber::Transcriber()
 {
-	struct whisper_context* ctx = whisper_init_from_file(MODEL_PATH);
+	ctx = whisper_init_from_file(MODEL_PATH);
 	wh_full_params = whisper_full_default_params(WHISPER_SAMPLING_BEAM_SEARCH);
 	wh_full_params.print_progress = false;
 

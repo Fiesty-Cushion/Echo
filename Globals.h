@@ -5,7 +5,7 @@
 
 
 const double PA_SAMPLE_RATE = 16000;
-const unsigned int PA_FRAMES_PER_BUFFER = 512;
+const unsigned long PA_FRAMES_PER_BUFFER = 512;
 
 // Using extern because Globals is included separately by Audio.h and Transcriber.h and both Audio.h and Transcriber.h are included in Gui.cpp leading to "X is already defined error"
 extern bool stopRequested;
