@@ -1,5 +1,7 @@
+#pragma once
 #include "raylib-cpp.hpp"
-
+#include "Audio.h"
+#include "Transcriber.h"
 #include "Button.h"
 
 #define MGRAY CLITERAL(Color) {225, 225, 225, 255}
@@ -7,51 +9,74 @@
 #define LIGHTBLUE CLITERAL(Color) {229, 241, 251, 255}
 #define LIGHTGRAY CLITERAL(Color) {173, 173, 173, 255}
 
-int mainn() {
-    // Initialization
-    //--------------------------------------------------------------------------------------
-    float screenWidth = 1000;
-    float screenHeight = 600;
-    raylib::Color textColor = raylib::Color::LightGray();
-    raylib::Window window(screenWidth, screenHeight, "Echo - Speech To Text");
-    raylib::Font font("./Resources/Fonts/RobotoMono-Regular.ttf");    
-    
-    Button button("Start", {100, 40}, RED, MGRAY, font);
-    button.setPosition({ screenWidth / 2, screenHeight / 2 });
+int main()
+{
+	// Initialization
+	//--------------------------------------------------------------------------------------
+	float screenWidth = 1000;
+	float screenHeight = 600;
+	raylib::Color textColor = raylib::Color::LightGray();
+	raylib::Window window(screenWidth, screenHeight, "Echo - Speech To Text");
+	raylib::Font font("./Resources/Fonts/RobotoMono-Regular.ttf");
 
-    SetTargetFPS(60);
-    //--------------------------------------------------------------------------------------
+	Button button("Start", { 100, 40 }, RED, MGRAY, font);
+	button.setPosition({ screenWidth / 2, screenHeight / 2 });
 
-    // Main game loop
-    while (!window.ShouldClose()) {   // Detect window close button or ESC key
-        // Update
-        //----------------------------------------------------------------------------------
-        // Update your variables here
-        //----------------------------------------------------------------------------------
+	SetTargetFPS(60);
 
-        if (button.isMouseOver())
-        {
-            button.setBackgroundColor(LIGHTBLUE);
-        }
-        else {
-            button.setBackgroundColor(MGRAY);
-        }
+	// Just for testing
+	bool isRunning = false;
+	Audio* audio = nullptr;
+	Transcriber* transcriber = nullptr;
 
-        if (button.isPressed())
-        {
-            std::cout << "Pressed" << std::endl;
-        }
+	//--------------------------------------------------------------------------------------
 
-        // Draw
-        //----------------------------------------------------------------------------------
-        BeginDrawing();
-        {
-            window.ClearBackground(MBG);
-            button.draw();
-        }
-        EndDrawing();
-        //----------------------------------------------------------------------------------
-    }
+	// Main game loop
+	while (!window.ShouldClose())
+	{   // Detect window close button or ESC key
+// Update
+//----------------------------------------------------------------------------------
+// Update your variables here
+//----------------------------------------------------------------------------------
 
-    return 0;
+		if (button.isMouseOver())
+		{
+			button.setBackgroundColor(LIGHTBLUE);
+		}
+		else
+		{
+			button.setBackgroundColor(MGRAY);
+		}
+
+		if (button.isPressed())
+		{
+			std::cout << "Pressed" << std::endl;
+			// For testing only
+			if (!isRunning)
+			{
+				audio = new Audio();
+				transcriber = new Transcriber();
+				audio->StartStream(RealTime);
+				transcriber->BeginRealTimeTranscription();
+				isRunning = true;
+			}
+			else
+			{
+				delete audio;
+				delete transcriber;
+			}
+		}
+
+		// Draw
+		//----------------------------------------------------------------------------------
+		BeginDrawing();
+		{
+			window.ClearBackground(MBG);
+			button.draw();
+		}
+		EndDrawing();
+		//----------------------------------------------------------------------------------
+	}
+
+	return 0;
 }
