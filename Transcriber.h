@@ -1,0 +1,28 @@
+#pragma once
+#include <whisper.h>
+#include <stdio.h>
+#include <iostream>
+#include <thread>
+#include <chrono>
+#include <iomanip>
+
+#include "Globals.h"
+#include "utils.h"
+
+class Transcriber
+{
+private:
+	const char MODEL_PATH[40] = "./Models/ggml-model-whisper-base.en.bin";
+
+	struct whisper_context* ctx = nullptr;
+	//whisper_params wh_params;
+	whisper_full_params wh_full_params;
+
+	void RealTimeTransciber();
+
+public:
+	Transcriber();
+	void BeginRealTimeTranscription();
+	~Transcriber();
+};
+
