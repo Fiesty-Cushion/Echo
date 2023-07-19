@@ -14,7 +14,7 @@ class Transcriber
 private:
 	const char MODEL_PATH[40] = "./Models/ggml-model-whisper-base.en.bin";
 
-	struct whisper_context* ctx = nullptr;
+	struct whisper_context* ctx;
 	//whisper_params wh_params;
 	whisper_full_params wh_full_params;
 
@@ -22,7 +22,10 @@ private:
 
 public:
 	Transcriber();
+
 	void BeginRealTimeTranscription();
+	int TranscribeFromWav(std::vector<float> pcmf32Wav, int processors);
+
 	~Transcriber();
 };
 

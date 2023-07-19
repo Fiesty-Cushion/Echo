@@ -2,7 +2,7 @@
 
 Transcriber::Transcriber()
 {
-	struct whisper_context* ctx = whisper_init_from_file(MODEL_PATH);
+	ctx = whisper_init_from_file(MODEL_PATH);
 	wh_full_params = whisper_full_default_params(WHISPER_SAMPLING_BEAM_SEARCH);
 	wh_full_params.print_progress = false;
 
@@ -61,6 +61,23 @@ void Transcriber::RealTimeTransciber()
 		}
 
 	}
+}
+
+int Transcriber::TranscribeFromWav(std::vector<float> pcmf32Wav, int processors)
+{
+
+	if (whisper_full_parallel(ctx, wh_full_params, pcmf32Wav.data(), pcmf32Wav.size(), processors) != 0) {
+		fprintf(stderr, "failed to process audio\n");
+		return -1;
+	}
+
+	const int n_segments = whisper_full_n_segments(ctx);
+	for (int i = 0; i < n_segments; ++i) {
+		const char* text = whisper_full_get_segment_text(ctx, i);
+
+		std::cout << text << std::endl;
+	}
+
 }
 
 Transcriber::~Transcriber()
