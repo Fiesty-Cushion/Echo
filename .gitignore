@@ -399,3 +399,7 @@ FodyWeavers.xsd
 
 Models
 build
+.DS_Store
+.vscode/
+
+
