@@ -1,167 +1,99 @@
-#include "raylib-cpp.hpp"
+#include "GUI.h"
 
-#include "Button.h"
+void GUI::Init()
+{
+	screenWidth = 1000;
+	screenHeight = 600;
+	textColor =  raylib::Color::LightGray();
+	window = new raylib::Window(screenWidth, screenHeight, "Echo - Speech To Text");
+	font =new raylib::Font("D:/Projects/C++/Echo/Resources/Fonts/RobotoMono-Regular.ttf");
+	SetTargetFPS(60);
 
-#define MGRAY CLITERAL(Color) {225, 225, 225, 255}
-#define MBG CLITERAL(Color) {240, 240, 240, 255}
-#define LIGHTBLUE CLITERAL(Color) {229, 241, 251, 255}
-// #define LIGHTGRAY CLITERAL(Color) {173, 173, 173, 255}
+	button1 = Button("Start", { 100, 40 }, RED, MGRAY, *font);
+	button2 = Button("Subtitle", { 100, 40 }, BLUE, MGRAY, *font);
 
-// class Screen {
-// 	private:
-//         float screenWidth = 1000;
-//         float screenHeight = 600;
-//         raylib::Color textColor = raylib::Color::LightGray();
-//         raylib::Window window({1000, 800}, "Echo - Speech To Text");
-//         raylib::Font font("./Resources/Fonts/RobotoMono-Regular.ttf"); 
+	button1.setPosition({ screenWidth / 2, screenHeight / 2 });
+	button2.setPosition({ screenWidth / 2, screenHeight / 2 + 50 });
+}
 
+void GUI::Draw()
+{
+	BeginDrawing();
+	{
+		window->ClearBackground(MBG);
+		button1.draw();
+		button2.draw();
+	}
+	EndDrawing();
+}
 
-// 	public:
-// 		void startScreen() {
-            
-//             Button button("Start", {100, 40}, RED, MGRAY, font);
-//             button.setPosition({ screenWidth / 2, screenHeight / 2 });
-        
-//         }
+void GUI::HandleEvents()
+{
+	//....Hover Effect....//
+	if (button1.isMouseOver())
+	{
+		button1.setBackgroundColor(LIGHTBLUE);
+	}
+	else
+	{
+		button1.setBackgroundColor(MGRAY);
+	}
 
-//         void choiceScreen() {
-            
-//             Button b1("O{ screenWidth / 2, screenHeight / 3 });
-//             b2.draw();
-
-//             Button b3("Option-3", {100, 40}, RED, MGRAY, font);
-//             b3.setPosition({ sption-1", {100, 40}, RED, MGRAY, font);
-//             b1.setPosition({ screenWidth / 2, screenHeight / 6 });
-//             b1.draw();
-
-//             Button b2("Option-2", {100, 40}, RED, MGRAY, font);
-//             b2.setPosition(creenWidth / 2, screenHeight / 2 });
-//             b3.draw();
-
-//         }
-
-//         void exitScreen() {
-//             Button bn("Thank YOU", {100, 40}, WHITE, BLACK, font);
-//             bn.setPosition({screenWidth / 2, screenHeight / 2});
-//         }
-
-//         bool isPressed() {
-
-//             if (button.isPressed())
-//             {
-//             std::cout << "Pressed" << std::endl;
-//             return true;
-//             }
-            
-//         }
-// };
-
-class Screen {
-    private:
-        Button button;
-
-    public:
-        
-
-};
-
-int main() {
-    // Initialization
-    //--------------------------------------------------------------------------------------
-    float screenWidth = 1000;
-    float screenHeight = 600;
-    raylib::Color textColor = raylib::Color::LightGray();
-    raylib::Window window(screenWidth, screenHeight, "Echo - Speech To Text");
-    raylib::Font font("./Resources/Fonts/RobotoMono-Regular.ttf");
-
-    // Screen screen();
-
-    Button button("Start", {100, 40}, RED, MGRAY, font);
-    button.setPosition({ screenWidth / 2, screenHeight / 2 });
-
-    Button b1("Option-1", {100, 40}, RED, MGRAY, font);
-    b1.setPosition({ screenWidth / 2, screenHeight / 6 });
-    
-    Button b2("Option-2", {100, 40}, RED, MGRAY, font);
-    b2.setPosition({ screenWidth / 2, screenHeight / 3 }); 
-
-    Button b3("Option-3", {100, 40}, RED, MGRAY, font);
-    b3.setPosition({ screenWidth / 2, screenHeight / 2 });
-
-    Button bn("Thank YOU", {100, 40}, WHITE, BLACK, font);
-    bn.setPosition({screenWidth / 2, screenHeight / 2});
+	if (button2.isMouseOver())
+	{
+		button2.setBackgroundColor(LIGHTBLUE);
+	}
+	else
+	{
+		button2.setBackgroundColor(MGRAY);
+	}
 
 
-    int k = 0;
+	//....Event Handlers....//
+	if (button1.isPressed())
+	{
+		std::cout << "Pressed" << std::endl;
+		// For testing only
+		if (!isRunning)
+		{
+			audio = new Audio();
+			transcriber = new Transcriber();
+			audio->StartStream(RealTime);
+			transcriber->BeginRealTimeTranscription();
+			isRunning = true;
+		}
+		else
+		{
+			delete audio;
+			delete transcriber;
+		}
+	}
+	if (button2.isPressed()) {
+		std::cout << "Subtitles Button Pressed" << std::endl;
 
-    SetTargetFPS(60);
-    //--------------------------------------------------------------------------------------
+		std::vector<float> pcm32fWav;
+		std::vector<std::vector<float>> pcmf32sWav;
+		bool stereo = false;
 
-    // Main game loop
-    while (!window.ShouldClose()) {   // Detect window close button or ESC key
-        // Update
-        //----------------------------------------------------------------------------------
-        // Update your variables here
-        //----------------------------------------------------------------------------------
+		audio = new Audio();
+		transcriber = new Transcriber();
 
-        if (button.isMouseOver())
-        {
-            button.setBackgroundColor(LIGHTBLUE);
-        }
-        else {
-            button.setBackgroundColor(MGRAY);
-        }
+		audio->readPCMFromWav("D:/Projects/C++/Echo/Audio/audio/4507-16021-0012.wav", pcm32fWav, pcmf32sWav, stereo);
+		transcriber->TranscribeFromWav(pcm32fWav, 1);
+	}
+}
 
-        if (button.isPressed())
-        {
-            std::cout << "Pressed" << std::endl;
-        }
+void GUI::StartLoop()
+{
+	while (!window->ShouldClose())
+	{
+		HandleEvents();
+		Draw();
+	}
+}
 
-        // Draw
-        //----------------------------------------------------------------------------------
-        
-        BeginDrawing();
-        {
-        switch (k)
-        {
-            case 0:
-                // screen.startScreen();
-                button.draw();
-                // Check for transition conditions
-                if (button.isPressed())
-                    k = 1;
-                break;
-
-            case 1:
-                window.ClearBackground(MBG);
-                b1.draw();
-                b2.draw();
-                b3.draw();
-
-                // screen.choiceScreen();
-
-                // Check for transition conditions
-                if (b1.isPressed())
-                    k = 2;
-                break;
-
-            case 2:
-
-                window.ClearBackground(MBG);
-                bn.draw();
-
-                // screen.exitScreen();
-
-                // Check for transition conditions
-                if (bn.isPressed())
-                    k =0;
-                break;
-        }
-        }
-        EndDrawing();
-        //----------------------------------------------------------------------------------
-    
-    }
-
-    return 0;
+void GUI::ShutDown()
+{
+	delete window;
+	delete font;
 }
