@@ -134,7 +134,7 @@ int main()
 	}
 
 	PaStream* stream;
-	err = Pa_OpenDefaultStream(&stream, 1, 0, paFloat32, PA_SAMPLE_RATE, PA_FRAMES_PER_BUFFER, Pa_Callback, nullptr);
+	err = Pa_OpenDefaultStream(&stream, 1, 0, paFloat32, PA_SAMPLE_RATE, PA_FRAMES_PER_BUFFER, Pa_Call back, nullptr);
 	Pa_CheckError(err);
 
 	err = Pa_StartStream(stream);
