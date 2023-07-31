@@ -5,23 +5,15 @@
 #include "Button.h"
 #include <string>
 
-#define MGRAY CLITERAL(Color) {225, 225, 225, 255}
-#define MBG CLITERAL(Color) {240, 240, 240, 255}
-#define LIGHTBLUE CLITERAL(Color) {229, 241, 251, 255}
-#define LIGHTGRAY CLITERAL(Color) {173, 173, 173, 255}
 class GUI
 {
-
-private:
+protected:
 	float screenWidth;
 	float screenHeight;
+
 	raylib::Color textColor; 
 	raylib::Window* window;
 	raylib::Font* font;
-
-	void Draw();
-	void HandleEvents();
-
 
 	Button button1;
 	Button button2;
@@ -32,8 +24,13 @@ private:
 	Transcriber* transcriber = nullptr;
 
 public:
-	void Init();
-	void StartLoop();
-	void ShutDown();
+	virtual void Init() = 0;
+
+	virtual void StartLoop() = 0;
+
+	virtual void Draw() = 0;
+	virtual void HandleEvents() = 0;
+
+	virtual void ShutDown() = 0;
 };
 

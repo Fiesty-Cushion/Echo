@@ -22,8 +22,10 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="LoadingWindowGUI.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pcm_stream.cpp" />
+    <ClCompile Include="MainWindowGUI.cpp" />
     <ClCompile Include="Transcriber.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -31,6 +33,8 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="GUI.h" />
+    <ClInclude Include="LoadingWindowGUI.h" />
+    <ClInclude Include="MainWindowGUI.h" />
     <ClInclude Include="Modes.h" />
     <ClInclude Include="Transcriber.h" />
     <ClInclude Include="utils.h" />

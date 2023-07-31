@@ -12,7 +12,7 @@
 class Transcriber
 {
 private:
-	const char MODEL_PATH[40] = "./Models/ggml-model-whisper-base.en.bin";
+	const char* MODEL_PATH = "./Models/ggml-model-whisper-base.en.bin";
 
 	struct whisper_context* ctx;
 	//whisper_params wh_params;

@@ -1,16 +1,18 @@
 #pragma once
-#include "GUI.h"
-#include "Audio.h"
-#include "Transcriber.h"
-#include "Button.h"
-
-
+#include "LoadingWindowGUI.h"
+#include "MainWindowGUI.h"
 
 int main()
 {
-	GUI ui;
-	ui.Init();
-	ui.StartLoop();
-	ui.ShutDown();
+	LoadingWindowGUI lGUI;
+	lGUI.Init();
+	lGUI.StartLoop();
+	lGUI.ShutDown();
+
+	MainWindowGUI mGUI;
+	mGUI.Init();
+	mGUI.StartLoop();
+	mGUI.ShutDown();
+
 	return 0;
 }

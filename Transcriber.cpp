@@ -3,8 +3,14 @@
 Transcriber::Transcriber()
 {
 	ctx = whisper_init_from_file(MODEL_PATH);
+	if (!ctx)
+	{
+		std::cerr << "CTX: MODEL FAILED TO INITIALIZE" << std::endl;
+		exit(2);
+	}
 	wh_full_params = whisper_full_default_params(WHISPER_SAMPLING_BEAM_SEARCH);
 	wh_full_params.print_progress = false;
+	wh_full_params.n_threads = 4;
 
 	std::cout << "Transcriber Intitialized" << std::endl;
 }
@@ -65,7 +71,7 @@ void Transcriber::RealTimeTransciber()
 
 int Transcriber::TranscribeFromWav(std::vector<float> pcmf32Wav, int processors)
 {
-
+	wh_full_params.print_realtime = true; 
 	if (whisper_full_parallel(ctx, wh_full_params, pcmf32Wav.data(), pcmf32Wav.size(), processors) != 0) {
 		fprintf(stderr, "failed to process audio\n");
 		return -1;
