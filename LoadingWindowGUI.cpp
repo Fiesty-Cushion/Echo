@@ -1,6 +1,4 @@
 #include "LoadingWindowGUI.h"
-#include "pl_mpeg.h"
-
 
 void LoadingWindowGUI::Init()
 {
@@ -10,10 +8,10 @@ void LoadingWindowGUI::Init()
 	SetConfigFlags(FLAG_WINDOW_UNDECORATED);
 	SetConfigFlags(FLAG_WINDOW_TRANSPARENT);
 
-	InitWindow(screenWidth, screenHeight, "raylib [textures] example - MPEG video playing");
+	InitWindow(screenWidth, screenHeight, "Echo - Loading Screen");
 	SetTargetFPS(120);
 
-	plm = plm_create_with_filename("D:/Projects/C++/Echo/Resources/Echo360.mpeg");
+	plm = plm_create_with_filename("./Resources/Echo360.mpeg");
 
 	if (!plm) exit(-1);
 
@@ -34,7 +32,7 @@ void LoadingWindowGUI::Init()
 
 	texture = LoadTextureFromImage(imFrame);
 
-	pause = false;
+	//pause = false;
 	int framesCounter = 0;
 
 	baseTime = GetTime();    // Time since InitWindow()
@@ -42,7 +40,7 @@ void LoadingWindowGUI::Init()
 
 void LoadingWindowGUI::StartLoop()
 {
-	while (!window->ShouldClose())
+	while (!pause)
 	{
 		HandleEvents();
 		Draw();
@@ -53,41 +51,38 @@ void LoadingWindowGUI::Draw()
 {
 	BeginDrawing();
 
-	pause ? ClearBackground(RAYWHITE) : ClearBackground(BLANK);
+	ClearBackground(BLANK);
 
-	if (!pause)
-	{
-		DrawTexture(texture, GetScreenWidth() / 2 - texture.width / 2, GetScreenHeight() / 2 - texture.height / 2, WHITE);
-	}
+	DrawTexture(texture, GetScreenWidth() / 2 - texture.width / 2, GetScreenHeight() / 2 - texture.height / 2, WHITE);
+	
 	EndDrawing();
 }
 
 void LoadingWindowGUI::HandleEvents()
 {
-	if (!pause)
-	{
+	
 		// Video should run at 'framerate' fps => One new frame every 1/framerate
-		double time = (GetTime() - baseTime);
+	double time = (GetTime() - baseTime);
 
-		if (time >= (1.0 / framerate))
+	if (time >= (1.0 / framerate))
+	{
+		baseTime = GetTime();
+
+		// Decode video frame
+		frame = plm_decode_video(plm);          // Get frame as 3 planes: Y, Cr, Cb
+		if (frame != nullptr)
 		{
-			baseTime = GetTime();
+			plm_frame_to_rgb(frame, static_cast<uint8_t*>(imFrame.data));  // Convert (Y, Cr, Cb) to RGB on the CPU (slow)
 
-			// Decode video frame
-			frame = plm_decode_video(plm);          // Get frame as 3 planes: Y, Cr, Cb
-			if (frame != nullptr)
-			{
-				plm_frame_to_rgb(frame, static_cast<uint8_t*>(imFrame.data));  // Convert (Y, Cr, Cb) to RGB on the CPU (slow)
-
-				// Update texture
-				UpdateTexture(texture, static_cast<uint8_t*>(imFrame.data));
-			}
-			else {
-				pause = true;
-			}
-
+			// Update texture
+			UpdateTexture(texture, static_cast<uint8_t*>(imFrame.data));
 		}
+		else {
+			pause = true;
+		}
+
 	}
+	
 
 }
 
@@ -97,5 +92,9 @@ void LoadingWindowGUI::ShutDown()
 	UnloadTexture(texture);
 
 	plm_destroy(plm);
+
+	CloseWindow();
+	window->ClearState(FLAG_WINDOW_UNDECORATED);
+	window->ClearState(FLAG_WINDOW_TRANSPARENT);
 }
 

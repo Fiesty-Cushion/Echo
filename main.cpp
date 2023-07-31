@@ -1,3 +1,6 @@
+#define PL_MPEG_IMPLEMENTATION
+#define _CRT_SECURE_NO_WARNINGS
+
 #pragma once
 #include "LoadingWindowGUI.h"
 #include "MainWindowGUI.h"

@@ -2,11 +2,15 @@
 
 void MainWindowGUI::Init()
 {
-	screenWidth = 1000;
-	screenHeight = 600;
+	screenWidth = 1280;
+	screenHeight = 720;
+
 	textColor = raylib::Color::LightGray();
 	window = new raylib::Window(screenWidth, screenHeight, "Echo - Speech To Text");
-	font = new raylib::Font("D:/Projects/C++/Echo/Resources/Fonts/RobotoMono-Regular.ttf");
+	
+	
+	font = new raylib::Font("./Resources/Fonts/RobotoMono-Regular.ttf");
+
 	SetTargetFPS(60);
 
 	button1 = Button("Start", { 100, 40 }, RED, MGRAY, *font);
