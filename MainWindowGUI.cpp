@@ -13,8 +13,8 @@ void MainWindowGUI::Init()
 
 	SetTargetFPS(60);
 
-	button1 = Button("Start", { 100, 40 }, RED, MGRAY, *font);
-	button2 = Button("Subtitle", { 100, 40 }, BLUE, MGRAY, *font);
+	button1 = Button("Let's Begin", { 100, 40 }, RED, MGRAY, *font);
+	button2 = Button("Exit", { 100, 40 }, BLUE, MGRAY, *font);
 
 	button1.setPosition({ screenWidth / 2, screenHeight / 2 });
 	button2.setPosition({ screenWidth / 2, screenHeight / 2 + 50 });

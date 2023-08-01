@@ -11,7 +11,7 @@ void LoadingWindowGUI::Init()
 	InitWindow(screenWidth, screenHeight, "Echo - Loading Screen");
 	SetTargetFPS(120);
 
-	plm = plm_create_with_filename("./Resources/Echo360.mpeg");
+	plm = plm_create_with_filename("/Users/macbook/Downloads/Echoo.mpeg");
 
 	if (!plm) exit(-1);
 
