@@ -1,22 +1,35 @@
-#include "GUI.h"
+#include "MainWindowGUI.h"
 
-void GUI::Init()
+void MainWindowGUI::Init()
 {
-	screenWidth = 1000;
-	screenHeight = 600;
-	textColor =  raylib::Color::LightGray();
+	screenWidth = 1280;
+	screenHeight = 720;
+
+	textColor = raylib::Color::LightGray();
 	window = new raylib::Window(screenWidth, screenHeight, "Echo - Speech To Text");
-	font =new raylib::Font("D:/Projects/C++/Echo/Resources/Fonts/RobotoMono-Regular.ttf");
+	
+	
+	font = new raylib::Font("./Resources/Fonts/RobotoMono-Regular.ttf");
+
 	SetTargetFPS(60);
 
-	button1 = Button("Start", { 100, 40 }, RED, MGRAY, *font);
-	button2 = Button("Subtitle", { 100, 40 }, BLUE, MGRAY, *font);
+	button1 = Button("Let's Begin", { 100, 40 }, RED, MGRAY, *font);
+	button2 = Button("Exit", { 100, 40 }, BLUE, MGRAY, *font);
 
 	button1.setPosition({ screenWidth / 2, screenHeight / 2 });
 	button2.setPosition({ screenWidth / 2, screenHeight / 2 + 50 });
 }
 
-void GUI::Draw()
+void MainWindowGUI::StartLoop()
+{
+	while (!window->ShouldClose())
+	{
+		HandleEvents();
+		Draw();
+	}
+}
+
+void MainWindowGUI::Draw()
 {
 	BeginDrawing();
 	{
@@ -27,7 +40,7 @@ void GUI::Draw()
 	EndDrawing();
 }
 
-void GUI::HandleEvents()
+void MainWindowGUI::HandleEvents()
 {
 	//....Hover Effect....//
 	if (button1.isMouseOver())
@@ -78,21 +91,12 @@ void GUI::HandleEvents()
 		audio = new Audio();
 		transcriber = new Transcriber();
 
-		audio->readPCMFromWav("D:/Projects/C++/Echo/Audio/audio/4507-16021-0012.wav", pcm32fWav, pcmf32sWav, stereo);
+		audio->readPCMFromWav("C:/Users/USER/Downloads/rain.wav", pcm32fWav, pcmf32sWav, stereo);
 		transcriber->TranscribeFromWav(pcm32fWav, 1);
 	}
 }
 
-void GUI::StartLoop()
-{
-	while (!window->ShouldClose())
-	{
-		HandleEvents();
-		Draw();
-	}
-}
-
-void GUI::ShutDown()
+void MainWindowGUI::ShutDown()
 {
 	delete window;
 	delete font;
