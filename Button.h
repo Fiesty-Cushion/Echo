@@ -29,6 +29,8 @@ public:
 		_font = font;
 	}
 
+	// friend class Screen;
+
 	void setTextColor(Color color)
 	{
 		btnText.color = color;
@@ -73,3 +75,5 @@ public:
 		_color = color;
 	}
 };
+
+
