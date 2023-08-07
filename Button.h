@@ -38,6 +38,8 @@ public:
 
 	void setPosition(Vector2 pos)
 	{
+		pos = {pos.x - button.GetWidth() / 2, pos.y - button.GetHeight() / 2};
+
 		button.SetPosition(pos);
 
 		Vector2 textPos = MeasureTextEx(_font, btnText.text.c_str(), btnText.GetFontSize(), btnText.GetSpacing());

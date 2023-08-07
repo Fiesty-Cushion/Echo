@@ -4,7 +4,8 @@
 #include <mutex>
 
 #define MGRAY CLITERAL(Color) {225, 225, 225, 255}
-#define MBG CLITERAL(Color) {240, 240, 240, 255}
+#define MBG CLITERAL(Color) {26, 26, 36, 255}
+#define LGRAY CLITERAL(Color) {73, 76, 93, 255}
 #define LIGHTBLUE CLITERAL(Color) {229, 241, 251, 255}
 // #define LIGHTGRAY CLITERAL(Color) {173, 173, 173, 255}
 

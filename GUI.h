@@ -11,17 +11,9 @@ protected:
 	float screenWidth;
 	float screenHeight;
 
-	raylib::Color textColor; 
 	raylib::Window* window;
 	raylib::Font* font;
 
-	Button button1;
-	Button button2;
-
-	// Just for testing
-	bool isRunning = false;
-	Audio* audio = nullptr;
-	Transcriber* transcriber = nullptr;
 
 public:
 	virtual void Init() = 0;
