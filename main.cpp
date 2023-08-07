@@ -5,17 +5,21 @@
 #include "LoadingWindowGUI.h"
 #include "MainWindowGUI.h"
 
+
 int main()
 {
-	LoadingWindowGUI lGUI;
-	lGUI.Init();
-	lGUI.StartLoop();
-	lGUI.ShutDown();
+	// LoadingWindowGUI lGUI;
+	// lGUI.Init();
+	// lGUI.StartLoop();
+	// lGUI.ShutDown();
 
 	MainWindowGUI mGUI;
 	mGUI.Init();
 	mGUI.StartLoop();
 	mGUI.ShutDown();
+
+	// MenuGUI opGUI;
+	// opGUI.Draw();
 
 	return 0;
 }
