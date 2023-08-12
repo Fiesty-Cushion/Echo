@@ -11,17 +11,10 @@ protected:
 	float screenWidth;
 	float screenHeight;
 
-	raylib::Color textColor; 
+	const std::string fontFile = "./Resources/Fonts/OpenSans-SemiBold.ttf";
+
 	raylib::Window* window;
-	raylib::Font* font;
-
-	Button button1;
-	Button button2;
-
-	// Just for testing
-	bool isRunning = false;
-	Audio* audio = nullptr;
-	Transcriber* transcriber = nullptr;
+	raylib::Font font;
 
 public:
 	virtual void Init() = 0;
@@ -33,4 +26,3 @@ public:
 
 	virtual void ShutDown() = 0;
 };
-

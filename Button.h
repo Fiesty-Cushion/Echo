@@ -17,17 +17,19 @@ public:
 	Button() { }
 
 	Button(std::string text, Vector2 size, Color bgColor, Color textColor, Font font)
-	{ 
+	{
 		btnText.text = text;
 		btnText.font = font;
 		btnText.fontSize = 18;
 		btnText.color = BLACK;
-		
+
 		button.SetSize(size);
 
 		_color = bgColor;
 		_font = font;
 	}
+
+	// friend class Screen;
 
 	void setTextColor(Color color)
 	{
@@ -36,6 +38,8 @@ public:
 
 	void setPosition(Vector2 pos)
 	{
+		pos = { pos.x - button.GetWidth() / 2, pos.y - button.GetHeight() / 2 };
+
 		button.SetPosition(pos);
 
 		Vector2 textPos = MeasureTextEx(_font, btnText.text.c_str(), btnText.GetFontSize(), btnText.GetSpacing());
@@ -46,7 +50,7 @@ public:
 	}
 
 	void draw() {
-		DrawRectangleLines(button.GetX() - 1, button.GetY() - 1, button.GetWidth()+2, button.GetHeight()+2, LIGHTGRAY);
+		DrawRectangleLines(button.GetX() - 1, button.GetY() - 1, button.GetWidth() + 2, button.GetHeight() + 2, LIGHTGRAY);
 		button.Draw(_color);
 		btnText.Draw(textX, textY);
 	}
@@ -73,3 +77,4 @@ public:
 		_color = color;
 	}
 };
+
