@@ -1,4 +1,5 @@
 #include "LoadingWindowGUI.h"
+#include "raylib-cpp/raylib-cpp.hpp"
 
 void LoadingWindowGUI::Init()
 {
