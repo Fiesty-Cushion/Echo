@@ -1,14 +1,14 @@
 #pragma once
 
-#include "raylib-cpp.hpp"
+#include <raylib-cpp.hpp>
 #include <iostream>
+#include "Globals.h"
 
 class Button {
 private:
 	raylib::Rectangle button;
 	raylib::Text btnText;
 	Color _color;
-	Font _font;
 
 public:
 	float textX;
@@ -16,17 +16,15 @@ public:
 
 	Button() { }
 
-	Button(std::string text, Vector2 size, Color bgColor, Color textColor, Font font)
+	Button(std::string text, Vector2 size, Color bgColor, Color textColor)
 	{
 		btnText.text = text;
-		btnText.font = font;
 		btnText.fontSize = 18;
 		btnText.color = BLACK;
 
 		button.SetSize(size);
 
 		_color = bgColor;
-		_font = font;
 	}
 
 	// friend class Screen;
@@ -42,7 +40,7 @@ public:
 
 		button.SetPosition(pos);
 
-		Vector2 textPos = MeasureTextEx(_font, btnText.text.c_str(), btnText.GetFontSize(), btnText.GetSpacing());
+		Vector2 textPos = MeasureTextEx(m_font, btnText.text.c_str(), btnText.GetFontSize(), btnText.GetSpacing());
 
 		textX = (pos.x + button.GetWidth() / 2) - (textPos.x / 2);
 		textY = (pos.y + button.GetHeight() / 2) - (textPos.y / 2);

@@ -1,4 +1,7 @@
 #include "MainWindowGUI.h"
+#include "TextBox.h"
+#include "Globals.h"
+#include "raylib-cpp.hpp"
 
 void MainWindowGUI::Init()
 {
@@ -6,22 +9,26 @@ void MainWindowGUI::Init()
 	screenHeight = 720;
 
 	window = new raylib::Window(screenWidth, screenHeight, "Echo - Speech To Text");
-	font.Load(fontFile);
-
 	SetTargetFPS(60);
 
+	raylib::Font m_font = raylib::Font(m_font_path);
+
 	title_Text.SetText("Echo - Speech to Text");
-	title_Text.SetFont(font);
+	title_Text.SetFont(m_font);
 	title_Text.SetFontSize(40);
 	title_Text.SetSpacing(5);
 
 	model_Text.SetText("Select a Language Model: ");
-	model_Text.SetFont(font);
+	model_Text.SetFont(m_font);
 	model_Text.SetFontSize(25);
 	model_Text.SetSpacing(3);
 
-	sample_Box.SetPosition({ 72, 194.7 });
-	sample_Box.SetSize({ 506.5, 45 });
+	//sample_Box.SetPosition({ 72, 194.7 });
+	//sample_Box.SetSize({ 506.5, 45 });
+
+	text_box = TextBox(72, 194.7, 506.5, 45);
+
+
 
 	// button1 = Button("Let's Begin", { 100, 40 }, RED, MGRAY, *font);
 	// button2 = Button("Exit", { 100, 40 }, BLUE, MGRAY, *font);
@@ -49,7 +56,7 @@ void MainWindowGUI::Draw()
 		title_Text.Draw({ static_cast<float>( screenWidth/2 - title_Text.MeasureEx().GetX()/2 ), 56.2 });
 		model_Text.Draw({ 72, 142.8 });
 
-		sample_Box.Draw(LGRAY);
+		text_box.Draw();
 
 		DrawLine(0, screenHeight / 2, screenWidth, screenHeight / 2, RED);
 		DrawLine(screenWidth / 2, 0, screenWidth / 2, screenHeight, RED);
@@ -62,6 +69,7 @@ void MainWindowGUI::Draw()
 
 void MainWindowGUI::HandleEvents()
 {
+	text_box.Update();
 	// //....Hover Effect....//
 	// if (button1.isMouseOver())
 	// {
@@ -119,5 +127,5 @@ void MainWindowGUI::HandleEvents()
 void MainWindowGUI::ShutDown()
 {
 	delete window;
-	font.Unload();
+	m_font.Unload();
 }

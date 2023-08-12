@@ -11,10 +11,7 @@ protected:
 	float screenWidth;
 	float screenHeight;
 
-	const std::string fontFile = "./Resources/Fonts/OpenSans-SemiBold.ttf";
-
 	raylib::Window* window;
-	raylib::Font font;
 
 public:
 	virtual void Init() = 0;
