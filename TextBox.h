@@ -9,18 +9,18 @@ private:
 	raylib::Rectangle textBox;
 	bool active;
 	std::string inputText;
-	raylib::Text text;
+	raylib::Text tb_text;
 
 public:
 
 	TextBox() {};
 	TextBox(float x, float y, float width, float height) : textBox{x, y, width, height}, active(false), inputText("") 
 	{
-		text.SetFont(m_font);
-		text.SetFontSize(20);
-		text.SetColor(MGRAY);
-		text.SetText(inputText);
-		text.SetSpacing(1.0f);
+		tb_text.SetFont(m_font);
+		tb_text.SetFontSize(20);
+		tb_text.SetColor(MGRAY);
+		tb_text.SetText(inputText);
+		tb_text.SetSpacing(1.0f);
 	}
 
 	void Draw()
@@ -28,12 +28,16 @@ public:
 		textBox.DrawRounded(0.5f, 8, LGRAY);
 
 		if (!active) {
-			text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
-			//DrawText(inputText.c_str(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, textBox.height - 20, MGRAY);
+
+			tb_text.SetText(inputText);
+			tb_text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
+	
 		}
 		else {
-			text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
-			//DrawText((inputText + "_").c_str(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, textBox.height - 20, MGRAY);
+
+			tb_text.SetText(inputText + '_');
+			tb_text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
+			
 		}
 	}
 
@@ -44,13 +48,13 @@ public:
 			if ( IsMouseButtonPressed(MOUSE_LEFT_BUTTON) )
 			{
 				active = true;
-				std::cout << "Clicked!" << std::endl;
+				//std::cout << "Clicked!" << std::endl;
 			}
 		}
 		else if ( IsMouseButtonPressed(MOUSE_LEFT_BUTTON) )
 		{
 			active = false;
-			std::cout << "Clicked Outside!" << std::endl;
+			//std::cout << "Clicked Outside!" << std::endl;
 		}
 
 		if (active)
@@ -60,11 +64,11 @@ public:
 			{
 				if ((key >= 32) && (key <= 125) && (inputText.length() < 20)) {
 					inputText += static_cast<char>(key);
-					text.SetText(inputText);
+					tb_text.SetText(inputText);
 				}
 				else if (IsKeyPressed(KEY_BACKSPACE) && (inputText.length() > 0)) {
 					inputText.pop_back();
-					text.SetText(inputText);
+					tb_text.SetText(inputText);
 				}
 				key = GetKeyPressed();
 			}
