@@ -1,4 +1,5 @@
 #include "LoadingWindowGUI.h"
+#include "raylib-cpp/raylib-cpp.hpp"
 
 void LoadingWindowGUI::Init()
 {
@@ -11,7 +12,7 @@ void LoadingWindowGUI::Init()
 	InitWindow(screenWidth, screenHeight, "Echo - Loading Screen");
 	SetTargetFPS(120);
 
-	plm = plm_create_with_filename("/Users/macbook/Downloads/Echoo.mpeg");
+	plm = plm_create_with_filename("./Resources/Echo360.mpeg");
 
 	if (!plm) exit(-1);
 
@@ -97,4 +98,3 @@ void LoadingWindowGUI::ShutDown()
 	window->ClearState(FLAG_WINDOW_UNDECORATED);
 	window->ClearState(FLAG_WINDOW_TRANSPARENT);
 }
-
