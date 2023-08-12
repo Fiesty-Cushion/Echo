@@ -10,8 +10,8 @@ void MainWindowGUI::Init()
 
 	window = new raylib::Window(screenWidth, screenHeight, "Echo - Speech To Text");
 	SetTargetFPS(60);
-
-	raylib::Font m_font = raylib::Font(m_font_path);
+	m_font = raylib::Font(m_font_path);
+	//raylib::Font m_font = raylib::Font(m_font_path);
 
 	title_Text.SetText("Echo - Speech to Text");
 	title_Text.SetFont(m_font);
