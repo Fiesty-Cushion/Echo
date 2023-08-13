@@ -1,4 +1,7 @@
 #include "MainWindowGUI.h"
+#include "TextBox.h"
+#include "Globals.h"
+#include "raylib-cpp.hpp"
 
 void MainWindowGUI::Init()
 {
@@ -6,22 +9,29 @@ void MainWindowGUI::Init()
 	screenHeight = 720;
 
 	window = new raylib::Window(screenWidth, screenHeight, "Echo - Speech To Text");
-	font.Load(fontFile);
-
 	SetTargetFPS(60);
 
-	title_Text.SetText("Echo - Speech to Text");
-	title_Text.SetFont(font);
-	title_Text.SetFontSize(40);
-	title_Text.SetSpacing(5);
+	m_font = raylib::Font(m_font_path);
+	
+	setupDisplayText(title_Text, "Echo - Speech to Text", 40);
+	setupDisplayText(model_Text, "Select a Language Model: ");
+	setupDisplayText(display_Text, "Real-Time Text to Speech: ");
+	setupDisplayText(subtitle_Text, "Subtitle Generation: ");
+	setupDisplayText(lyrics_Text, "Lyrics Generation: ");
+	setupDisplayText(karaoke_Text, "Karaoke Generation: ");
 
-	model_Text.SetText("Select a Language Model: ");
-	model_Text.SetFont(font);
-	model_Text.SetFontSize(25);
-	model_Text.SetSpacing(3);
 
-	sample_Box.SetPosition({ 72, 194.7 });
-	sample_Box.SetSize({ 506.5, 45 });
+	subtitle_Box.SetPosition({ 926.7, 189.3 });
+	subtitle_Box.SetSize({ 281.3, 54.6 });
+	lyrics_Box.SetPosition({ 926.7, 330.1 });
+	lyrics_Box.SetSize({ 281.3, 54.6 });
+	karaoke_Box.SetPosition({ 926.7, 471 });
+	karaoke_Box.SetSize({ 281.3, 54.6 });
+
+	
+
+
+	
 
 	// button1 = Button("Let's Begin", { 100, 40 }, RED, MGRAY, *font);
 	// button2 = Button("Exit", { 100, 40 }, BLUE, MGRAY, *font);
@@ -43,17 +53,29 @@ void MainWindowGUI::Draw()
 {
 	BeginDrawing();
 	{
-
 		window->ClearBackground(MBG);
-
+		
 		title_Text.Draw({ static_cast<float>( screenWidth/2 - title_Text.MeasureEx().GetX()/2 ), 56.2 });
 		model_Text.Draw({ 72, 142.8 });
+		display_Text.Draw({ 72, 308.3 });
+		subtitle_Text.Draw({ 926.7, 142.8 });
+		lyrics_Text.Draw({ 926.7, 283.9 });
+		karaoke_Text.Draw({ 926.7, 424.8 });
 
-		sample_Box.Draw(LGRAY);
+		// std::cout << (screenWidth / 2) - (title_Text.MeasureEx().GetX() / 2) << std::endl;
+
+		model_Text.Draw({72, 142.8});
+
+		modelTextBox.Draw( 72, 194.7 , 250, 50);
+		// outputTextBox.Draw( 506.5, 45 , 50, 50);
+
+		subtitle_Box.Draw(LGRAY);
+		lyrics_Box.Draw(LGRAY);
+		karaoke_Box.Draw(LGRAY);
 
 		DrawLine(0, screenHeight / 2, screenWidth, screenHeight / 2, RED);
 		DrawLine(screenWidth / 2, 0, screenWidth / 2, screenHeight, RED);
-
+		
 		// button1.draw();
 		// button2.draw();
 	}
@@ -62,6 +84,8 @@ void MainWindowGUI::Draw()
 
 void MainWindowGUI::HandleEvents()
 {
+
+	modelTextBox.Update();
 	// //....Hover Effect....//
 	// if (button1.isMouseOver())
 	// {
@@ -118,6 +142,6 @@ void MainWindowGUI::HandleEvents()
 
 void MainWindowGUI::ShutDown()
 {
+	m_font.Unload();
 	delete window;
-	font.Unload();
 }
