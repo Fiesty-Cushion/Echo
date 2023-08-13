@@ -6,3 +6,5 @@ std::queue<std::vector<float>> pcm32_bufferQueue;
 std::vector<float> pcm32_buffer;
 std::condition_variable bufferCV;
 std::mutex bufferMutex;
+
+raylib::Font m_font;

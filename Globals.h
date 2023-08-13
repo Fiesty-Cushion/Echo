@@ -3,6 +3,8 @@
 #include <condition_variable>
 #include <mutex>
 
+#include <raylib-cpp.hpp>
+
 #define MGRAY CLITERAL(Color) {225, 225, 225, 255}
 #define MBG CLITERAL(Color) {26, 26, 36, 255}
 #define LGRAY CLITERAL(Color) {73, 76, 93, 255}
@@ -19,3 +21,7 @@ extern std::queue<std::vector<float>> pcm32_bufferQueue;
 extern std::vector<float> pcm32_buffer;
 extern std::condition_variable bufferCV;
 extern std::mutex bufferMutex;
+
+//Load the Deafult font
+extern raylib::Font m_font;
+const std::string m_font_path = "/Users/macbook/my_Files/Code/Echo/Resources/Fonts/OpenSans-SemiBold.ttf";

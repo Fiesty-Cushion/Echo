@@ -1,4 +1,5 @@
 #pragma once
+
 #include "raylib-cpp.hpp"
 #include "Audio.h"
 #include "Transcriber.h"
@@ -11,10 +12,7 @@ protected:
 	float screenWidth;
 	float screenHeight;
 
-	const std::string fontFile = "./Resources/Fonts/OpenSans-SemiBold.ttf";
-
 	raylib::Window* window;
-	raylib::Font font;
 
 public:
 	virtual void Init() = 0;
