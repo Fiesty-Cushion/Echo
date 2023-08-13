@@ -34,16 +34,16 @@ public:
 
 		if (!active) {
 			text.SetText(inputText);
-			text.SetFont(m_font);
-			text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
-			// m_font.DrawText(text.GetText(), text.MeasureEx(), text.GetFontSize(), text.GetSpacing(), text.GetColor());
+			//text.SetFont(m_font);
+			//text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
+			 m_font.DrawText(text.GetText(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, text.GetFontSize(), text.GetSpacing(), text.GetColor());
 			//DrawText(inputText.c_str(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, textBox.height - 20, MGRAY);
 		}
 		else {
 			text.SetText(inputText + '_');
-			// m_font.DrawText(text.GetText(), text.MeasureEx(), text.GetFontSize(), text.GetSpacing(), text.GetColor());
-			text.SetFont(m_font);
-			text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
+			 m_font.DrawText(text.GetText(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, text.GetFontSize(), text.GetSpacing(), text.GetColor());
+			//text.SetFont(m_font);
+			//text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
 			//DrawText((inputText + "_").c_str(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, textBox.height - 20, MGRAY);
 		}
 	}
