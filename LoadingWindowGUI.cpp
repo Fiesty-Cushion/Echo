@@ -3,6 +3,7 @@
 
 void LoadingWindowGUI::Init()
 {
+
 	screenWidth = 1280;
 	screenHeight = 720;
 
@@ -12,9 +13,12 @@ void LoadingWindowGUI::Init()
 	InitWindow(screenWidth, screenHeight, "Echo - Loading Screen");
 	SetTargetFPS(120);
 
-	plm = plm_create_with_filename("./Resources/Echo360.mpeg");
+	plm = plm_create_with_filename("../Resources/Echoo.mpeg");
 
-	if (!plm) exit(-1);
+	if (!plm) {
+		std::cout << "Loading Window Path Not Found !!!";
+		exit(-1);
+	}
 
 	framerate = plm_get_framerate(plm);
 
@@ -37,6 +41,8 @@ void LoadingWindowGUI::Init()
 	int framesCounter = 0;
 
 	baseTime = GetTime();    // Time since InitWindow()
+	std::cout<<std::endl<<"init end"<<std::endl;
+
 }
 
 void LoadingWindowGUI::StartLoop()

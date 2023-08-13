@@ -2,6 +2,7 @@
 
 #include <raylib-cpp.hpp>
 #include "Globals.h"
+#include <iostream>
 
 class TextBox {
 private:
@@ -9,35 +10,41 @@ private:
 	raylib::Rectangle textBox;
 	bool active;
 	std::string inputText;
-	raylib::Text tb_text;
+	raylib::Text text;
 
 public:
 
-	TextBox() {};
-	TextBox(float x, float y, float width, float height) : textBox{x, y, width, height}, active(false), inputText("") 
+	TextBox()
 	{
-		tb_text.SetFont(m_font);
-		tb_text.SetFontSize(20);
-		tb_text.SetColor(MGRAY);
-		tb_text.SetText(inputText);
-		tb_text.SetSpacing(1.0f);
+		active = false;
+		inputText = "";
+		text.SetFont(m_font);
+		std::cout<<std::boolalpha;
+		std::cout<<m_font.IsReady()<<std::endl;
+		text.SetFontSize(20);
+		text.SetColor(MGRAY);
+		text.SetText(inputText);
+		text.SetSpacing(1.0f);
 	}
 
-	void Draw()
+	void Draw(float x, float y, float width, float height)
 	{
+		textBox = raylib::Rectangle(x, y, width, height);
 		textBox.DrawRounded(0.5f, 8, LGRAY);
 
 		if (!active) {
-
-			tb_text.SetText(inputText);
-			tb_text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
-	
+			text.SetText(inputText);
+			text.SetFont(m_font);
+			text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
+			// m_font.DrawText(text.GetText(), text.MeasureEx(), text.GetFontSize(), text.GetSpacing(), text.GetColor());
+			//DrawText(inputText.c_str(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, textBox.height - 20, MGRAY);
 		}
 		else {
-
-			tb_text.SetText(inputText + '_');
-			tb_text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
-			
+			text.SetText(inputText + '_');
+			// m_font.DrawText(text.GetText(), text.MeasureEx(), text.GetFontSize(), text.GetSpacing(), text.GetColor());
+			text.SetFont(m_font);
+			text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
+			//DrawText((inputText + "_").c_str(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, textBox.height - 20, MGRAY);
 		}
 	}
 
@@ -48,27 +55,28 @@ public:
 			if ( IsMouseButtonPressed(MOUSE_LEFT_BUTTON) )
 			{
 				active = true;
-				//std::cout << "Clicked!" << std::endl;
+				std::cout << std::endl << "Clicked!" << std::endl;
 			}
 		}
 		else if ( IsMouseButtonPressed(MOUSE_LEFT_BUTTON) )
 		{
 			active = false;
-			//std::cout << "Clicked Outside!" << std::endl;
+			std::cout << "Clicked Outside!" << std::endl;
 		}
 
 		if (active)
 		{
+			int charrr = GetCharPressed();
 			int key = GetKeyPressed();
 			while (key > 0) 
 			{
-				if ((key >= 32) && (key <= 125) && (inputText.length() < 20)) {
-					inputText += static_cast<char>(key);
-					tb_text.SetText(inputText);
+				if ((key >= 32) && (key <= 125) /*&& (inputText.length() < 20)*/) {
+					inputText += static_cast<char>(charrr);
+					text.SetText(inputText);
 				}
 				else if (IsKeyPressed(KEY_BACKSPACE) && (inputText.length() > 0)) {
 					inputText.pop_back();
-					tb_text.SetText(inputText);
+					text.SetText(inputText);
 				}
 				key = GetKeyPressed();
 			}
