@@ -13,6 +13,12 @@ private:
 	raylib::Text lyrics_Text;
 	raylib::Text karaoke_Text;
 
+	Button button1;
+ 	bool isRunning =false;
+	Audio* audio = nullptr;
+ 	Transcriber* transcriber = nullptr;
+
+
 	TextBox modelTextBox;
 	TextBox outputTextBox;
 

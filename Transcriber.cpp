@@ -61,6 +61,7 @@ void Transcriber::RealTimeTransciber()
 			double duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 			duration *= 1e-9;
 			printf("%s\n", text);
+			transcribedText += text;
 			std::cout << "Time Elapsed: " << std::fixed << duration << std::setprecision(9) << "sec" << std::endl;
 			start = end;
 			fflush(stdout);

@@ -1,342 +1,268 @@
 /*******************************************************************************************
 *
-*   raylib MPEG video player
+*   raylib [text] example - Rectangle bounds
 *
-*   We have two options to decode video & audio using pl_mpeg.h library:
+*   Example originally created with raylib 2.5, last time updated with raylib 4.0
 *
-*   1) Use plm_decode() and just hand over the delta time since the last call.
-*      It will decode everything needed and call your callbacks (specified through
-*      plm_set_{video|audio}_decode_callback()) any number of times.
+*   Example contributed by Vlad Adrian (@demizdor) and reviewed by Ramon Santamaria (@raysan5)
 *
-*   2) Use plm_decode_video() and plm_decode_audio() to decode exactly one
-*      frame of video or audio data at a time. How you handle the synchronization of
-*      both streams is up to you.
+*   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
+*   BSD-like license that allows static linking with closed source software
 *
-*   This example uses option 2) and handles synchonization manually.
-*
-*   This example has been created using raylib 3.0 (www.raylib.com)
-*   raylib is licensed under an unmodified zlib/libpng license (View raylib.h for details)
-*
-*   Copyright (c) 2020 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2018-2023 Vlad Adrian (@demizdor) and Ramon Santamaria (@raysan5)
 *
 ********************************************************************************************/
 
 #include "raylib.h"
 
-#include <stdlib.h>     // Required for: NULL
+static void DrawTextBoxed(Font font, const char *text, Rectangle rec, float fontSize, float spacing, bool wordWrap, Color tint);   // Draw text using font inside rectangle limits
+static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, float fontSize, float spacing, bool wordWrap, Color tint, int selectStart, int selectLength, Color selectTint, Color selectBackTint);    // Draw text using font inside rectangle limits with support for text selection
 
-#define PL_MPEG_IMPLEMENTATION
-#include "pl_mpeg.h"
-
-int plm_get_total_video_frames(const char *filename)
-{
-    int total_frames = 0;
-    
-    plm_t *plm = plm_create_with_filename(filename);
-
-    if (plm != NULL)
-    {
-        plm_frame_t *frame = plm_skip_video_frame(plm);
-        while (frame != NULL)
-        {
-            total_frames++;
-            frame = plm_skip_video_frame(plm);
-        }
-
-        plm_destroy(plm);
-    }
-
-    return total_frames;
-}
-
-int plm_get_total_audio_frames(const char *filename)
-{
-    int total_frames = 0;
-    
-    plm_t *plm = plm_create_with_filename(filename);
-
-    if (plm != NULL)
-    {
-        plm_samples_t *sample = plm_decode_audio(plm);
-        while (sample != NULL)
-        {
-            total_frames++;
-            sample = plm_decode_audio(plm);
-        }
-
-        plm_destroy(plm);
-    }
-
-    return total_frames;
-}
-
-int main(void)
+//------------------------------------------------------------------------------------
+// Program main entry point
+//------------------------------------------------------------------------------------
+int mainn(void)
 {
     // Initialization
-    //---------------------------------------------------------
-    const int screenWidth = 960;
-    const int screenHeight = 540;
+    //--------------------------------------------------------------------------------------
+    const int screenWidth = 800;
+    const int screenHeight = 450;
 
-    InitWindow(screenWidth, screenHeight, "raylib MPEG video player");
-    
-    InitAudioDevice();
-    
-    plm_t *plm = NULL;
-	plm_frame_t *frame = NULL;
-    plm_samples_t *sample = NULL;
-    double framerate = 0.0;
-    int samplerate = 0;
-    
-    Image imFrame = { 0 };
-    Texture texture = { 0 };
-    AudioStream stream = { 0 };
+    InitWindow(screenWidth, screenHeight, "raylib [text] example - draw text inside a rectangle");
 
-    double baseTime = 0.0;
-    double timeExcess = 0.0;
-    bool pause = false;
-    
-    int totalVideoFrames = 0;
-    int currentVideoFrame = 0;
-    
-    // NOTE: Every audio frame contains 1152 samples
-    int totalAudioFrames = 0;
-    int currentAudioFrame = 0;
-    
-    Rectangle timeBar = { 0 };
+    const char text[] = "Text cannot escape\tthis container\t...word wrap also works when active so here's \
+a long text for testing.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod \
+tempor incididunt ut labore et dolore magna aliqua. Nec ullamcorper sit amet risus nullam eget felis eget.";
 
-    //SetTargetFPS(60);     // Let the app run at full speed!
-    //----------------------------------------------------------
+    bool resizing = false;
+    bool wordWrap = true;
+
+    Rectangle container = { 25.0f, 25.0f, screenWidth - 50.0f, screenHeight - 250.0f };
+    Rectangle resizer = { container.x + container.width - 17, container.y + container.height - 17, 14, 14 };
+
+    // Minimum width and heigh for the container rectangle
+    const float minWidth = 60;
+    const float minHeight = 60;
+    const float maxWidth = screenWidth - 50.0f;
+    const float maxHeight = screenHeight - 160.0f;
+
+    Vector2 lastMouse = { 0.0f, 0.0f }; // Stores last mouse coordinates
+    Color borderColor = MAROON;         // Container border color
+    Font font = GetFontDefault();       // Get default system font
+
+    SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
+    //--------------------------------------------------------------------------------------
 
     // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    while (!WindowShouldClose())        // Detect window close button or ESC key
     {
         // Update
-        //-----------------------------------------------------
-        if (IsFileDropped())
+        //----------------------------------------------------------------------------------
+        if (IsKeyPressed(KEY_SPACE)) wordWrap = !wordWrap;
+
+        Vector2 mouse = GetMousePosition();
+
+        // Check if the mouse is inside the container and toggle border color
+        if (CheckCollisionPointRec(mouse, container)) borderColor = Fade(MAROON, 0.4f);
+        else if (!resizing) borderColor = MAROON;
+
+        // Container resizing logic
+        if (resizing)
         {
-            int dropsCount = 0;
-            char **droppedFiles = GetDroppedFiles(&dropsCount);
-            
-            if ((dropsCount == 1) && IsFileExtension(droppedFiles[0], ".mpg"))
-            {
-                if (plm != NULL)
-                {
-                    // If a video file is already loaded, 
-                    // unload and reset everything
-                    plm_destroy(plm);
-                    frame = NULL;
-                    sample = NULL;
-                    framerate = 0.0;
-                    samplerate = 0;
-                    
-                    UnloadImage(imFrame);
-                    UnloadTexture(texture);
-                    CloseAudioStream(stream);
-                    baseTime = 0.0;
-                    timeExcess = 0.0;
-                    pause = false;
-                }
-                
-                totalVideoFrames = plm_get_total_video_frames(droppedFiles[0]);
-                printf("Video total frames: %i\n", totalVideoFrames);
-                
-                totalAudioFrames = plm_get_total_audio_frames(droppedFiles[0]);
-                printf("Audio total samples: %i\n", totalAudioFrames);
-                
-                plm = plm_create_with_filename(droppedFiles[0]);
+            if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) resizing = false;
 
-                if (plm != NULL)        // MPEG file loaded successfully!
-                {
-                    plm_set_loop(plm, false);   // No loop by default
+            float width = container.width + (mouse.x - lastMouse.x);
+            container.width = (width > minWidth)? ((width < maxWidth)? width : maxWidth) : minWidth;
 
-                    framerate = plm_get_framerate(plm);
-                    samplerate = plm_get_samplerate(plm);
-
-                    TraceLog(LOG_INFO, "[%s] Loaded succesfully. Framerate: %f - Samplerate: %i", droppedFiles[0], (float)framerate, samplerate);
-                    
-                    // Init video settings
-                    int videoWidth = plm_get_width(plm);
-                    int videoHeight = plm_get_height(plm);
-                    
-                    SetWindowSize(videoWidth, videoHeight);
-                    
-                    timeBar = (Rectangle){ 0, GetScreenHeight() - 10, GetScreenWidth(), 10 };
-
-                    imFrame.width = videoWidth;
-                    imFrame.height = videoHeight;
-                    imFrame.format = UNCOMPRESSED_R8G8B8;
-                    imFrame.mipmaps = 1;
-                    imFrame.data = (unsigned char *)malloc(imFrame.width*imFrame.height*3);
-                    
-                    texture = LoadTextureFromImage(imFrame);
-                    
-                    // Init audio settings (if track available)
-                    if (plm_get_num_audio_streams(plm) > 0)
-                    {
-                        plm_set_audio_enabled(plm, true, 0);
-
-                        // Init audio stream (sample rate: 44100, sample size: 32bit, channels: 2-stereo)
-                        // WARNING: InitAudioDevice() inits internal double buffering system to (internal default size)*2,
-                        // but every audio sample is PLM_AUDIO_SAMPLES_PER_FRAME, always 1152 samples...
-                        // Two solutions:
-                        // 1. Just change raudio internal AUDIO_BUFFER_SIZE to match PLM_AUDIO_SAMPLES_PER_FRAME (1152)
-                        // 2. Keep internal raudio AUDIO_BUFFER_SIZE (4096) and fill it with multiple plm audio samples,
-                        //    main issue is that (4096/1152 = 3.555) no round numbers, so, some samples should be divided
-                        //    into the double buffering system... not trivial to do...
-                        SetAudioStreamBufferSizeDefault(1152);  // Solution 1.
-                        stream = InitAudioStream(samplerate, 32, 2);
-
-                        PlayAudioStream(stream);        // Start processing stream buffer (no data loaded currently)
-
-                        // Adjust the audio lead time according to the audio_spec buffer size
-                        //plm_set_audio_lead_time(plm, (double)PLM_AUDIO_SAMPLES_PER_FRAME/(double)samplerate);
-                    }
-                }
-            }
-            
-            ClearDroppedFiles();
+            float height = container.height + (mouse.y - lastMouse.y);
+            container.height = (height > minHeight)? ((height < maxHeight)? height : maxHeight) : minHeight;
         }
-        
-        if (IsKeyPressed(KEY_SPACE)) pause = !pause;
-        
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), timeBar))
+        else
         {
-            int barPositionX = GetMouseX();
-            
-            // Get equivalent audio frame
-            currentAudioFrame = (barPositionX*totalAudioFrames)/GetScreenWidth();
-            
-            // Get equivalent video frame (use audio frame to sync)
-            currentVideoFrame = (int)((float)currentAudioFrame*(float)totalVideoFrames/(float)totalAudioFrames);
-            
-            // Reset video/audio and move to required frame/sample
-            if (plm != NULL)
-            {
-                plm_rewind(plm);
-                frame = NULL;
-                sample = NULL;
-                baseTime = 0.0;
-                timeExcess = 0.0;
-            }
-            
-            for (int i = 0; i < currentAudioFrame; i++) sample = plm_decode_audio(plm); //plm_skip_audio_frame(plm)
-            for (int i = 0; i < currentVideoFrame; i++) frame = plm_skip_video_frame(plm);
-        }
-        
-        if (IsKeyPressed(KEY_R))
-        {
-            if (plm != NULL) plm_destroy(plm);
-            
-            plm = NULL;
-            frame = NULL;
-            sample = NULL;
-            baseTime = 0.0;
-            timeExcess = 0.0;
+            // Check if we're resizing
+            if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouse, resizer)) resizing = true;
         }
 
-        if ((plm != NULL) && !pause)
-        {
-            // Video should run at 'framerate' fps => One new frame every 1/framerate
-            double time = (GetTime() - baseTime);
-            
-            if (time >= (1.0/framerate))
-            {
-                timeExcess += (time - 0.040);
-                baseTime = GetTime();
-                
-                // Decode video frame
-                frame = plm_decode_video(plm);  // Get frame as 3 planes: Y, Cr, Cb
-                currentVideoFrame++;
-                
-                if (timeExcess >= 0.040)
-                {
-                    // Discard previous frame and load new one
-                    frame = plm_decode_video(plm);
-                    currentVideoFrame++;
-                    timeExcess = 0;
-                }
-                
-                if (frame != NULL)      // We got a frame!
-                {
-                    plm_frame_to_rgb(frame, imFrame.data);  // Convert (Y, Cr, Cb) to RGB on the CPU (slow)
-                    UpdateTexture(texture, imFrame.data);   // Update texture with new data for drawing
-                }
-            }
+        // Move resizer rectangle properly
+        resizer.x = container.x + container.width - 17;
+        resizer.y = container.y + container.height - 17;
 
-            // Refill audio stream if required
-            while (IsAudioStreamProcessed(stream))
-            {
-                // Decode audio sample
-                sample = plm_decode_audio(plm);
-                currentAudioFrame++;
-                
-                if (sample != NULL)     // We got a sample!
-                {
-                    // Copy sample to audio stream
-                    UpdateAudioStream(stream, sample->interleaved, PLM_AUDIO_SAMPLES_PER_FRAME*2);
-                }
-            }
-            
-            if (currentVideoFrame >= totalVideoFrames) 
-            {
-                //plm_rewind(plm);  // Rewind to the beginning (loop)
-                if (plm != NULL) plm_destroy(plm);
-                plm = NULL;
-                frame = NULL;
-                sample = NULL;
-                baseTime = 0.0;
-                timeExcess = 0.0;
-            }
-        }
-        //-----------------------------------------------------
+        lastMouse = mouse; // Update mouse
+        //----------------------------------------------------------------------------------
 
         // Draw
-        //-----------------------------------------------------
+        //----------------------------------------------------------------------------------
         BeginDrawing();
 
             ClearBackground(RAYWHITE);
 
-            if (plm != NULL) 
-            {                
-                DrawTexture(texture, GetScreenWidth()/2 - texture.width/2, GetScreenHeight()/2 - texture.height/2, WHITE);
-                
-                DrawText(TextFormat("CURRENT VIDEO FRAME: %i", currentVideoFrame), 10, 10, 10, LIGHTGRAY);
-                DrawText(TextFormat("CURRENT AUDIO FRAME: %i", currentAudioFrame), 10, 30, 10, LIGHTGRAY);
-                
-                DrawRectangleRec(timeBar, GRAY);
-                DrawRectangle(0, GetScreenHeight() - 10, (GetScreenWidth()*currentVideoFrame)/totalVideoFrames, 10, BLUE);
-                if (CheckCollisionPointRec(GetMousePosition(), timeBar)) DrawRectangleLinesEx(timeBar, 1, DARKBLUE);
-                
-                //if (GuiButton((Rectangle){ 10, 10, 40, 40 }, pause? "#132#" : "#131#")) pause = !pause;   // Requires raygui.h
-                
-                if (pause)
-                {
-                    DrawRectangle(GetScreenWidth()/2 - 40, GetScreenHeight()/2 - 40, 20, 80, RAYWHITE);
-                    DrawRectangle(GetScreenWidth()/2 + 10, GetScreenHeight()/2 - 40, 20, 80, RAYWHITE);
-                }
-            }
-            else 
-            {
-                DrawText("MPEG Video Player", 320, 180, 30, LIGHTGRAY);
-                DrawText("Drag and drop your MPEG file", 310, 240, 20, LIGHTGRAY);
-            }
+            DrawRectangleLinesEx(container, 3, borderColor);    // Draw container border
+
+            // Draw text in container (add some padding)
+            DrawTextBoxed(font, text, (Rectangle){ container.x + 4, container.y + 4, container.width - 4, container.height - 4 }, 20.0f, 2.0f, wordWrap, GRAY);
+
+            DrawRectangleRec(resizer, borderColor);             // Draw the resize box
+
+            // Draw bottom info
+            DrawRectangle(0, screenHeight - 54, screenWidth, 54, GRAY);
+            DrawRectangleRec((Rectangle){ 382.0f, screenHeight - 34.0f, 12.0f, 12.0f }, MAROON);
+
+            DrawText("Word Wrap: ", 313, screenHeight-115, 20, BLACK);
+            if (wordWrap) DrawText("ON", 447, screenHeight - 115, 20, RED);
+            else DrawText("OFF", 447, screenHeight - 115, 20, BLACK);
+
+            DrawText("Press [SPACE] to toggle word wrap", 218, screenHeight - 86, 20, GRAY);
+
+            DrawText("Click hold & drag the    to resize the container", 155, screenHeight - 38, 20, RAYWHITE);
 
         EndDrawing();
-        //-----------------------------------------------------
+        //----------------------------------------------------------------------------------
     }
 
     // De-Initialization
-    //---------------------------------------------------------
-    UnloadImage(imFrame);
-    UnloadTexture(texture);
-    
-    CloseAudioStream(stream);
-    CloseAudioDevice();
-
-    if (plm != NULL) plm_destroy(plm);
-    
+    //--------------------------------------------------------------------------------------
     CloseWindow();        // Close window and OpenGL context
-    //----------------------------------------------------------
+    //--------------------------------------------------------------------------------------
 
     return 0;
+}
+
+//--------------------------------------------------------------------------------------
+// Module functions definition
+//--------------------------------------------------------------------------------------
+
+// Draw text using font inside rectangle limits
+static void DrawTextBoxed(Font font, const char *text, Rectangle rec, float fontSize, float spacing, bool wordWrap, Color tint)
+{
+    DrawTextBoxedSelectable(font, text, rec, fontSize, spacing, wordWrap, tint, 0, 0, WHITE, WHITE);
+}
+
+// Draw text using font inside rectangle limits with support for text selection
+static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, float fontSize, float spacing, bool wordWrap, Color tint, int selectStart, int selectLength, Color selectTint, Color selectBackTint)
+{
+    int length = TextLength(text);  // Total length in bytes of the text, scanned by codepoints in loop
+
+    float textOffsetY = 0;          // Offset between lines (on line break '\n')
+    float textOffsetX = 0.0f;       // Offset X to next character to draw
+
+    float scaleFactor = fontSize/(float)font.baseSize;     // Character rectangle scaling factor
+
+    // Word/character wrapping mechanism variables
+    enum { MEASURE_STATE = 0, DRAW_STATE = 1 };
+    int state = wordWrap? MEASURE_STATE : DRAW_STATE;
+
+    int startLine = -1;         // Index where to begin drawing (where a line begins)
+    int endLine = -1;           // Index where to stop drawing (where a line ends)
+    int lastk = -1;             // Holds last value of the character position
+
+    for (int i = 0, k = 0; i < length; i++, k++)
+    {
+        // Get next codepoint from byte string and glyph index in font
+        int codepointByteCount = 0;
+        int codepoint = GetCodepoint(&text[i], &codepointByteCount);
+        int index = GetGlyphIndex(font, codepoint);
+
+        // NOTE: Normally we exit the decoding sequence as soon as a bad byte is found (and return 0x3f)
+        // but we need to draw all of the bad bytes using the '?' symbol moving one byte
+        if (codepoint == 0x3f) codepointByteCount = 1;
+        i += (codepointByteCount - 1);
+
+        float glyphWidth = 0;
+        if (codepoint != '\n')
+        {
+            glyphWidth = (font.glyphs[index].advanceX == 0) ? font.recs[index].width*scaleFactor : font.glyphs[index].advanceX*scaleFactor;
+
+            if (i + 1 < length) glyphWidth = glyphWidth + spacing;
+        }
+
+        // NOTE: When wordWrap is ON we first measure how much of the text we can draw before going outside of the rec container
+        // We store this info in startLine and endLine, then we change states, draw the text between those two variables
+        // and change states again and again recursively until the end of the text (or until we get outside of the container).
+        // When wordWrap is OFF we don't need the measure state so we go to the drawing state immediately
+        // and begin drawing on the next line before we can get outside the container.
+        if (state == MEASURE_STATE)
+        {
+            // TODO: There are multiple types of spaces in UNICODE, maybe it's a good idea to add support for more
+            // Ref: http://jkorpela.fi/chars/spaces.html
+            if ((codepoint == ' ') || (codepoint == '\t') || (codepoint == '\n')) endLine = i;
+
+            if ((textOffsetX + glyphWidth) > rec.width)
+            {
+                endLine = (endLine < 1)? i : endLine;
+                if (i == endLine) endLine -= codepointByteCount;
+                if ((startLine + codepointByteCount) == endLine) endLine = (i - codepointByteCount);
+
+                state = !state;
+            }
+            else if ((i + 1) == length)
+            {
+                endLine = i;
+                state = !state;
+            }
+            else if (codepoint == '\n') state = !state;
+
+            if (state == DRAW_STATE)
+            {
+                textOffsetX = 0;
+                i = startLine;
+                glyphWidth = 0;
+
+                // Save character position when we switch states
+                int tmp = lastk;
+                lastk = k - 1;
+                k = tmp;
+            }
+        }
+        else
+        {
+            if (codepoint == '\n')
+            {
+                if (!wordWrap)
+                {
+                    textOffsetY += (font.baseSize + font.baseSize/2)*scaleFactor;
+                    textOffsetX = 0;
+                }
+            }
+            else
+            {
+                if (!wordWrap && ((textOffsetX + glyphWidth) > rec.width))
+                {
+                    textOffsetY += (font.baseSize + font.baseSize/2)*scaleFactor;
+                    textOffsetX = 0;
+                }
+
+                // When text overflows rectangle height limit, just stop drawing
+                if ((textOffsetY + font.baseSize*scaleFactor) > rec.height) break;
+
+                // Draw selection background
+                bool isGlyphSelected = false;
+                if ((selectStart >= 0) && (k >= selectStart) && (k < (selectStart + selectLength)))
+                {
+                    DrawRectangleRec((Rectangle){ rec.x + textOffsetX - 1, rec.y + textOffsetY, glyphWidth, (float)font.baseSize*scaleFactor }, selectBackTint);
+                    isGlyphSelected = true;
+                }
+
+                // Draw current character glyph
+                if ((codepoint != ' ') && (codepoint != '\t'))
+                {
+                    DrawTextCodepoint(font, codepoint, (Vector2){ rec.x + textOffsetX, rec.y + textOffsetY }, fontSize, isGlyphSelected? selectTint : tint);
+                }
+            }
+
+            if (wordWrap && (i == endLine))
+            {
+                textOffsetY += (font.baseSize + font.baseSize/2)*scaleFactor;
+                textOffsetX = 0;
+                startLine = endLine;
+                endLine = -1;
+                glyphWidth = 0;
+                selectStart += lastk - k;
+                k = lastk;
+
+                state = !state;
+            }
+        }
+
+        if ((textOffsetX != 0) || (codepoint != ' ')) textOffsetX += glyphWidth;  // avoid leading spaces
+    }
 }
