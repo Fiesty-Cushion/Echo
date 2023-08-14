@@ -10,10 +10,9 @@ void MainWindowGUI::Init()
 
 	window = new raylib::Window(screenWidth, screenHeight, "Echo - Speech To Text");
 	SetTargetFPS(60);
-	m_font = raylib::Font(m_font_path);
-	//raylib::Font m_font = raylib::Font(m_font_path);
-
-	m_font = raylib::Font(m_font_path);
+	m_font = raylib::Font(m_font_path, 80);
+	GenTextureMipmaps(&m_font.texture);
+	SetTextureFilter(m_font.texture, TEXTURE_FILTER_BILINEAR);
 	
 	setupDisplayText(title_Text, "Echo - Speech to Text", 40);
 	setupDisplayText(model_Text, "Select a Language Model: ");

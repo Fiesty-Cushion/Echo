@@ -35,7 +35,7 @@ void LoadingWindowGUI::Init()
 	imFrame.mipmaps = 1;
 	imFrame.data = (unsigned char*)malloc(width * height * 3);
 
-	texture = LoadTextureFromImage(imFrame);
+	vid_texture = LoadTextureFromImage(imFrame);
 
 	//pause = false;
 	int framesCounter = 0;
@@ -60,7 +60,7 @@ void LoadingWindowGUI::Draw()
 
 	ClearBackground(BLANK);
 
-	DrawTexture(texture, GetScreenWidth() / 2 - texture.width / 2, GetScreenHeight() / 2 - texture.height / 2, WHITE);
+	DrawTexture(vid_texture, GetScreenWidth() / 2 - vid_texture.width / 2, GetScreenHeight() / 2 - vid_texture.height / 2, WHITE);
 	
 	EndDrawing();
 }
@@ -82,7 +82,7 @@ void LoadingWindowGUI::HandleEvents()
 			plm_frame_to_rgb(frame, static_cast<uint8_t*>(imFrame.data));  // Convert (Y, Cr, Cb) to RGB on the CPU (slow)
 
 			// Update texture
-			UpdateTexture(texture, static_cast<uint8_t*>(imFrame.data));
+			UpdateTexture(vid_texture, static_cast<uint8_t*>(imFrame.data));
 		}
 		else {
 			pause = true;
@@ -96,7 +96,7 @@ void LoadingWindowGUI::HandleEvents()
 void LoadingWindowGUI::ShutDown()
 {
 	UnloadImage(imFrame);
-	UnloadTexture(texture);
+	UnloadTexture(vid_texture);
 
 	plm_destroy(plm);
 
