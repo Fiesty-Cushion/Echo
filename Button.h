@@ -49,9 +49,10 @@ public:
 
 	}
 
-	void draw() {
+	void draw(std::string buttonText) {
 		DrawRectangleLines(button.GetX() - 1, button.GetY() - 1, button.GetWidth() + 2, button.GetHeight() + 2, LIGHTGRAY);
 		button.Draw(_color);
+		btnText.SetText(buttonText);
 		btnText.Draw(textX, textY);
 	}
 
