@@ -5,6 +5,9 @@
 
 #include <raylib-cpp.hpp>
 
+#include "Audio.h"
+#include "Transcriber.h"
+
 #define MGRAY CLITERAL(Color) {225, 225, 225, 255}
 #define MBG CLITERAL(Color) {26, 26, 36, 255}
 #define LGRAY CLITERAL(Color) {73, 76, 93, 255}
@@ -21,6 +24,10 @@ extern std::queue<std::vector<float>> pcm32_bufferQueue;
 extern std::vector<float> pcm32_buffer;
 extern std::condition_variable bufferCV;
 extern std::mutex bufferMutex;
+
+extern std::string transcribedText;
+// extern Transcriber* transcriber;
+// extern Audio* audio;
 
 //Load the Deafult font
 extern raylib::Font m_font;

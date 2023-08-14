@@ -29,10 +29,15 @@ void MainWindowGUI::Init()
 	karaoke_Box.SetPosition({ 926.7, 471 });
 	karaoke_Box.SetSize({ 281.3, 54.6 });
 
-	// button1 = Button("Let's Begin", { 100, 40 }, RED, MGRAY, *font);
+	
+
+
+	
+
+	button1 = Button("Start", { 100, 40 }, LGRAY, MGRAY, m_font);
 	// button2 = Button("Exit", { 100, 40 }, BLUE, MGRAY, *font);
 
-	// button1.setPosition({ screenWidth / 2, 2 * screenHeight / 3 });
+	button1.setPosition({ 403, 300 });
 	// button2.setPosition({ screenWidth / 2, screenHeight / 2 + 50 });
 }
 
@@ -62,8 +67,10 @@ void MainWindowGUI::Draw()
 
 		model_Text.Draw({72, 142.8});
 
-		modelTextBox.Draw( 72, 194.7 , 250, 50);
-		// outputTextBox.Draw( 506.5, 45 , 50, 50);
+		modelTextBox.Draw( 72, 194.7 , 506.5, 45);
+		outputTextBox.Draw( 69.8, 371 , 714.7, 277);
+		outputTextBox.DrawTextBoxed(m_font, transcribedText.c_str(), Rectangle {69.8 + 10, 371 + 10 , 714.7 - 20, 277 - 20}, 20, 1, true, MGRAY);
+		
 
 		subtitle_Box.Draw(LGRAY);
 		lyrics_Box.Draw(LGRAY);
@@ -72,7 +79,7 @@ void MainWindowGUI::Draw()
 		DrawLine(0, screenHeight / 2, screenWidth, screenHeight / 2, RED);
 		DrawLine(screenWidth / 2, 0, screenWidth / 2, screenHeight, RED);
 		
-		// button1.draw();
+		button1.draw(isRunning ? "Stop" : "Start");
 		// button2.draw();
 	}
 	EndDrawing();
@@ -82,6 +89,7 @@ void MainWindowGUI::HandleEvents()
 {
 
 	modelTextBox.Update();
+	outputTextBox.Update();
 	// //....Hover Effect....//
 	// if (button1.isMouseOver())
 	// {
@@ -103,24 +111,26 @@ void MainWindowGUI::HandleEvents()
 
 
 	//....Event Handlers....//
-	// if (button1.isPressed())
-	// {
-	// 	std::cout << "Pressed" << std::endl;
-	// 	// For testing only
-	// 	if (!isRunning)
-	// 	{
-	// 		audio = new Audio();
-	// 		transcriber = new Transcriber();
-	// 		audio->StartStream(RealTime);
-	// 		transcriber->BeginRealTimeTranscription();
-	// 		isRunning = true;
-	// 	}
-	// 	else
-	// 	{
-	// 		delete audio;
-	// 		delete transcriber;
-	// 	}
-	// }
+	if (button1.isPressed())
+	{
+		isRunning = !isRunning;
+		std::cout << "Pressed" << std::endl;
+		// For testing only
+		if (isRunning)
+		{
+			audio = new Audio();
+			transcriber = new Transcriber();
+			audio->StartStream(RealTime);
+			transcriber->BeginRealTimeTranscription();
+		}
+		else
+		{
+			delete audio;
+			delete transcriber;
+			audio = nullptr;
+			transcriber = nullptr;
+		}
+	}
 	// if (button2.isPressed()) {
 	// 	std::cout << "Subtitles Button Pressed" << std::endl;
 

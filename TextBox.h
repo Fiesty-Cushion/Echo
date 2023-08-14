@@ -9,7 +9,7 @@ private:
 
 	raylib::Rectangle textBox;
 	bool active;
-	std::string inputText;
+	
 	raylib::Text text;
 
     // Draw text using font inside rectangle limits with support for text selection
@@ -123,6 +123,7 @@ private:
     }
 
 public:
+	std::string inputText;
 
 	TextBox()
 	{
@@ -138,18 +139,18 @@ public:
 	void Draw(float x, float y, float width, float height)
 	{
 		textBox = raylib::Rectangle(x, y, width, height);
-		textBox.DrawRounded(0.5f, 8, LGRAY);
+		textBox.DrawRounded(0.2f, 8, LGRAY);
 
 		if (!active) {
 			text.SetText(inputText);
 			//text.SetFont(m_font);
 			//text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
-			 m_font.DrawText(text.GetText(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, text.GetFontSize(), text.GetSpacing(), text.GetColor());
+			 //m_font.DrawText(text.GetText(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, text.GetFontSize(), text.GetSpacing(), text.GetColor());
 			//DrawText(inputText.c_str(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, textBox.height - 20, MGRAY);
 		}
 		else {
 			text.SetText(inputText + '_');
-			m_font.DrawText(text.GetText(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, text.GetFontSize(), text.GetSpacing(), text.GetColor());
+			//m_font.DrawText(text.GetText(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, text.GetFontSize(), text.GetSpacing(), text.GetColor());
 			
 			//text.SetFont(m_font);
 			//text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
