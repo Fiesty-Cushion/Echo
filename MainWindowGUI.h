@@ -12,10 +12,12 @@ private:
 	raylib::Text lyrics_Text;
 	raylib::Text karaoke_Text;
 
-	Button button1;
- 	bool isRunning =false;
+	Button transcribeButton;
+	bool isInitialClick = true;
+
+	bool isTranscribing = false;
 	Audio* audio = nullptr;
- 	Transcriber* transcriber = nullptr;
+	Transcriber* transcriber = nullptr;
 
 
 	TextBox modelTextBox;
@@ -25,7 +27,8 @@ private:
 	raylib::Rectangle lyrics_Box;
 	raylib::Rectangle karaoke_Box;
 
-	void setupDisplayText(raylib::Text& text, std::string message, int fontSize = 25){
+	void setupDisplayText(raylib::Text& text, std::string message, int fontSize = 25)
+	{
 		text.SetText(message);
 		text.SetFont(m_font);
 		text.SetFontSize(fontSize);

@@ -13,7 +13,7 @@ void MainWindowGUI::Init()
 	m_font = raylib::Font(m_font_path, 80);
 	GenTextureMipmaps(&m_font.texture);
 	SetTextureFilter(m_font.texture, TEXTURE_FILTER_BILINEAR);
-	
+
 	setupDisplayText(title_Text, "Echo - Speech to Text", 40);
 	setupDisplayText(model_Text, "Select a Language Model: ");
 	setupDisplayText(display_Text, "Real-Time Text to Speech: ");
@@ -29,16 +29,14 @@ void MainWindowGUI::Init()
 	karaoke_Box.SetPosition({ 926.7, 471 });
 	karaoke_Box.SetSize({ 281.3, 54.6 });
 
-	
-
-
-	
-
-	button1 = Button("Start", { 100, 40 }, LGRAY, MGRAY, m_font);
+	transcribeButton = Button("Start", { 100, 40 }, LGRAY, MGRAY, m_font);
 	// button2 = Button("Exit", { 100, 40 }, BLUE, MGRAY, *font);
 
-	button1.setPosition({ 403, 300 });
+	transcribeButton.setPosition({ 403, 300 });
 	// button2.setPosition({ screenWidth / 2, screenHeight / 2 + 50 });
+
+	audio = new Audio();
+	transcriber = new Transcriber();
 }
 
 void MainWindowGUI::StartLoop()
@@ -55,8 +53,8 @@ void MainWindowGUI::Draw()
 	BeginDrawing();
 	{
 		window->ClearBackground(MBG);
-		
-		title_Text.Draw({ static_cast<float>( screenWidth/2 - title_Text.MeasureEx().GetX()/2 ), 56.2 });
+
+		title_Text.Draw({ static_cast<float>(screenWidth / 2 - title_Text.MeasureEx().GetX() / 2), 56.2 });
 		model_Text.Draw({ 72, 142.8 });
 		display_Text.Draw({ 72, 308.3 });
 		subtitle_Text.Draw({ 926.7, 142.8 });
@@ -65,12 +63,12 @@ void MainWindowGUI::Draw()
 
 		// std::cout << (screenWidth / 2) - (title_Text.MeasureEx().GetX() / 2) << std::endl;
 
-		model_Text.Draw({72, 142.8});
+		model_Text.Draw({ 72, 142.8 });
 
-		modelTextBox.Draw( 72, 194.7 , 506.5, 45);
-		outputTextBox.Draw( 69.8, 371 , 714.7, 277);
-		outputTextBox.DrawTextBoxed(m_font, transcribedText.c_str(), Rectangle {69.8 + 10, 371 + 10 , 714.7 - 20, 277 - 20}, 20, 1, true, MGRAY);
-		
+		modelTextBox.Draw(72, 194.7, 506.5, 45);
+		outputTextBox.Draw(69.8, 371, 714.7, 277);
+		outputTextBox.DrawTextBoxed(m_font, transcribedText.c_str(), Rectangle{ 69.8 + 10, 371 + 10 , 714.7 - 20, 277 - 20 }, 20, 1, true, MGRAY);
+
 
 		subtitle_Box.Draw(LGRAY);
 		lyrics_Box.Draw(LGRAY);
@@ -78,8 +76,8 @@ void MainWindowGUI::Draw()
 
 		DrawLine(0, screenHeight / 2, screenWidth, screenHeight / 2, RED);
 		DrawLine(screenWidth / 2, 0, screenWidth / 2, screenHeight, RED);
-		
-		button1.draw(isRunning ? "Stop" : "Start");
+
+		transcribeButton.draw(isTranscribing ? "Stop" : "Start");
 		// button2.draw();
 	}
 	EndDrawing();
@@ -111,25 +109,24 @@ void MainWindowGUI::HandleEvents()
 
 
 	//....Event Handlers....//
-	if (button1.isPressed())
+	if (transcribeButton.isPressed())
 	{
-		isRunning = !isRunning;
+		isTranscribing = !isTranscribing;
 		std::cout << "Pressed" << std::endl;
-		// For testing only
-		if (isRunning)
+
+		// only start the stream once
+		if (isInitialClick)
 		{
-			audio = new Audio();
-			transcriber = new Transcriber();
 			audio->StartStream(RealTime);
 			transcriber->BeginRealTimeTranscription();
+			isInitialClick = false;
 		}
+
+		if (isTranscribing)
+			takeMicrophoneInput = true;
 		else
-		{
-			delete audio;
-			delete transcriber;
-			audio = nullptr;
-			transcriber = nullptr;
-		}
+			takeMicrophoneInput = false;
+
 	}
 	// if (button2.isPressed()) {
 	// 	std::cout << "Subtitles Button Pressed" << std::endl;
@@ -149,5 +146,7 @@ void MainWindowGUI::HandleEvents()
 void MainWindowGUI::ShutDown()
 {
 	m_font.Unload();
+	delete audio;
+	delete transcriber;
 	delete window;
 }

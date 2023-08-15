@@ -1,6 +1,7 @@
 #include "Globals.h"
 
-bool stopRequested = false;
+bool abortTranscription = false;
+bool takeMicrophoneInput = false;
 int count = 0;
 std::queue<std::vector<float>> pcm32_bufferQueue;
 std::vector<float> pcm32_buffer;

@@ -32,8 +32,10 @@ auto Audio::GenerateCallback(Modes mode)
 int Audio::RealTimeCallback(const void* inputBuffer, void* outputBuffer, unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData)
 {
 	//std::cout << "RT Callback called" << std::endl;
-	if (stopRequested)
+	if (abortTranscription)
 		return paComplete;
+	if (!takeMicrophoneInput)
+		return paContinue;
 	const float* input = static_cast<const float*>(inputBuffer);
 
 	for (int i = 0; i < framesPerBuffer; i++)
@@ -99,27 +101,32 @@ bool Audio::readPCMFromWav(const std::string& fname, std::vector<float>& pcmf32,
 	drwav wav;
 	std::vector<uint8_t> wav_data;
 
-	if (drwav_init_file(&wav, fname.c_str(), nullptr) == false) {
+	if (drwav_init_file(&wav, fname.c_str(), nullptr) == false)
+	{
 		fprintf(stderr, "error: failed to open '%s' as WAV file\n", fname.c_str());
 		return false;
 	}
 
-	if (wav.channels != 1 && wav.channels != 2) {
+	if (wav.channels != 1 && wav.channels != 2)
+	{
 		fprintf(stderr, "%s: WAV file '%s' must be mono or stereo\n", __func__, fname.c_str());
 		return false;
 	}
 
-	if (stereo && wav.channels != 2) {
+	if (stereo && wav.channels != 2)
+	{
 		fprintf(stderr, "%s: WAV file '%s' must be stereo for diarization\n", __func__, fname.c_str());
 		return false;
 	}
 
-	if (wav.sampleRate != WHISPER_SAMPLE_RATE) {
+	if (wav.sampleRate != WHISPER_SAMPLE_RATE)
+	{
 		fprintf(stderr, "%s: WAV file '%s' must be %i kHz\n", __func__, fname.c_str(), WHISPER_SAMPLE_RATE / 1000);
 		return false;
 	}
 
-	if (wav.bitsPerSample != 16) {
+	if (wav.bitsPerSample != 16)
+	{
 		fprintf(stderr, "%s: WAV file '%s' must be 16-bit\n", __func__, fname.c_str());
 		return false;
 	}
@@ -133,24 +140,30 @@ bool Audio::readPCMFromWav(const std::string& fname, std::vector<float>& pcmf32,
 
 	// convert to mono, float
 	pcmf32.resize(n);
-	if (wav.channels == 1) {
-		for (uint64_t i = 0; i < n; i++) {
+	if (wav.channels == 1)
+	{
+		for (uint64_t i = 0; i < n; i++)
+		{
 			pcmf32[i] = float(pcm16[i]) / 32768.0f;
 		}
 	}
-	else {
-		for (uint64_t i = 0; i < n; i++) {
+	else
+	{
+		for (uint64_t i = 0; i < n; i++)
+		{
 			pcmf32[i] = float(pcm16[2 * i] + pcm16[2 * i + 1]) / 65536.0f;
 		}
 	}
 
-	if (stereo) {
+	if (stereo)
+	{
 		// convert to stereo, float
 		pcmf32s.resize(2);
 
 		pcmf32s[0].resize(n);
 		pcmf32s[1].resize(n);
-		for (uint64_t i = 0; i < n; i++) {
+		for (uint64_t i = 0; i < n; i++)
+		{
 			pcmf32s[0][i] = float(pcm16[2 * i]) / 32768.0f;
 			pcmf32s[1][i] = float(pcm16[2 * i + 1]) / 32768.0f;
 		}
@@ -161,7 +174,7 @@ bool Audio::readPCMFromWav(const std::string& fname, std::vector<float>& pcmf32,
 
 Audio::~Audio()
 {
-	stopRequested = true;
+	abortTranscription = true;
 	Pa_Sleep(5000);
 
 	// Forcefully stop the stream if it hasn't stopped yet
