@@ -12,6 +12,7 @@ private:
 
 	PaError error;
 	PaStream* stream = nullptr;
+	//static bool takeMicrophoneInput;
 
 	void ExitIfError();
 	auto GenerateCallback(Modes mode);
@@ -39,6 +40,10 @@ public:
 	void StartStream(Modes mode);
 	bool readPCMFromWav(const std::string& fname, std::vector<float>& pcmf32, std::vector<std::vector<float>>& pcmf32s, bool stereo);
 
+	//static void EnableMicrophoneInput(bool value) { takeMicrophoneInput = value; }
+
 	~Audio();
 };
+
+//bool Audio::takeMicrophoneInput = false;
 

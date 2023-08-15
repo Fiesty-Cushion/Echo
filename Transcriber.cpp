@@ -9,7 +9,6 @@ Transcriber::Transcriber()
 		exit(2);
 	}
 	wh_full_params = whisper_full_default_params(WHISPER_SAMPLING_BEAM_SEARCH);
-	wh_full_params.print_progress = false;
 	wh_full_params.n_threads = 4;
 
 	std::cout << "Transcriber Intitialized" << std::endl;
@@ -26,7 +25,11 @@ void Transcriber::RealTimeTransciber()
 {
 	auto start = std::chrono::high_resolution_clock::now();
 
-	while (!stopRequested)
+	whisper_full_params wh_realtime_params = wh_full_params;
+	wh_realtime_params.print_progress = false;
+
+
+	while (!abortTranscription)
 	{
 
 		std::unique_lock<std::mutex> lock(bufferMutex);
@@ -46,7 +49,7 @@ void Transcriber::RealTimeTransciber()
 
 		lock.unlock();
 
-		if (whisper_full(ctx, wh_full_params, pcm32_combined.data(), pcm32_combined.size()) != 0)
+		if (whisper_full(ctx, wh_realtime_params, pcm32_combined.data(), pcm32_combined.size()) != 0)
 		{
 			fprintf(stderr, "%s: failed to process audio\n", "Audio");
 			return;
@@ -72,14 +75,16 @@ void Transcriber::RealTimeTransciber()
 
 int Transcriber::TranscribeFromWav(std::vector<float> pcmf32Wav, int processors)
 {
-	wh_full_params.print_realtime = true; 
-	if (whisper_full_parallel(ctx, wh_full_params, pcmf32Wav.data(), pcmf32Wav.size(), processors) != 0) {
+	wh_full_params.print_realtime = true;
+	if (whisper_full_parallel(ctx, wh_full_params, pcmf32Wav.data(), pcmf32Wav.size(), processors) != 0)
+	{
 		fprintf(stderr, "failed to process audio\n");
 		return -1;
 	}
 
 	const int n_segments = whisper_full_n_segments(ctx);
-	for (int i = 0; i < n_segments; ++i) {
+	for (int i = 0; i < n_segments; ++i)
+	{
 		const char* text = whisper_full_get_segment_text(ctx, i);
 
 		std::cout << text << std::endl;
