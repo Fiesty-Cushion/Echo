@@ -19,18 +19,15 @@ class MainWindowGUI : public GUI
 private:
 	TextWave wave;
 
-	raylib::Text title_Text;
-	raylib::Text model_Text;
-	raylib::Text display_Text;
-	raylib::Text subtitle_Text;
-	raylib::Text lyrics_Text;
-	raylib::Text karaoke_Text;
-	raylib::Text feature_Text;
+	raylib::Text titleText;
+	raylib::Text modelSelectText;
+	raylib::Text sttText;
+	raylib::Text featuresText;
 
 	DropdownList dropdownList;
 
 	Audio* audio;
-	RealtimeSttWhisper* transcriber;
+	Transcriber* transcriber;
 
 	Button transcribeButton;
 	bool isInitialClick = true;
