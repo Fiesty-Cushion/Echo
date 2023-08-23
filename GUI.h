@@ -1,10 +1,7 @@
 #pragma once
 
-#include "raylib-cpp.hpp"
-#include "Audio.h"
-#include "Transcriber.h"
-#include "Button.h"
-#include <string>
+#include <raylib-cpp/Window.hpp>
+
 
 class GUI
 {

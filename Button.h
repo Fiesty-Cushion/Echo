@@ -1,7 +1,10 @@
 #pragma once
 
-#include "raylib-cpp.hpp"
-#include <iostream>
+#include <string>
+#include <raylib.h>
+#include <raylib-cpp/Rectangle.hpp>
+#include <raylib-cpp/Text.hpp>
+
 
 class Button {
 private:
@@ -14,7 +17,7 @@ public:
 	float textX;
 	float textY;
 
-	Button() { }
+	Button() {}
 
 	Button(std::string text, Vector2 size, Color bgColor, Color textColor, Font font)
 	{
@@ -28,8 +31,6 @@ public:
 		_color = bgColor;
 		_font = font;
 	}
-
-	// friend class Screen;
 
 	void setTextColor(Color color)
 	{
@@ -49,7 +50,7 @@ public:
 
 	}
 
-	void draw(std::string buttonText) {
+	void Draw(std::string buttonText) {
 		DrawRectangleLines(button.GetX() - 1, button.GetY() - 1, button.GetWidth() + 2, button.GetHeight() + 2, LIGHTGRAY);
 		button.Draw(_color);
 		btnText.SetText(buttonText);
