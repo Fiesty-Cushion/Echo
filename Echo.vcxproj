@@ -20,12 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Audio.cpp" />
-    <ClCompile Include="DropdownList.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="LoadingWindowGUI.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MWhisper.cpp" />
-    <ClCompile Include="pcm_stream.cpp" />
     <ClCompile Include="MainWindowGUI.cpp" />
     <ClCompile Include="Transcriber.cpp" />
   </ItemGroup>
@@ -38,10 +35,8 @@
     <ClInclude Include="LoadingWindowGUI.h" />
     <ClInclude Include="MainWindowGUI.h" />
     <ClInclude Include="Modes.h" />
-    <ClInclude Include="MWhisper.h" />
     <ClInclude Include="TextBox.h" />
     <ClInclude Include="Transcriber.h" />
-    <ClInclude Include="utils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -160,7 +155,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries\lib;$(ProjectDir)Libraries\lib\raylib;$(ProjectDir)Libraries\lib\wxWidgets</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ftgld.lib;freetype.lib;opengl32.lib;winmm.lib;gdi32.lib;$(ProjectDir)Libraries\lib\portaudio_x64.lib;whisper.lib;raylib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;winmm.lib;gdi32.lib;$(ProjectDir)Libraries\lib\portaudio_x64.lib;whisper.lib;raylib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -180,7 +175,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)Libraries\lib;$(ProjectDir)Libraries\lib\raylib;$(ProjectDir)Libraries\lib\wxWidgets</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(ProjectDir)Libraries\lib\portaudio_x64.lib;whisper.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)Libraries\lib\portaudio_x64.lib;whisper.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
