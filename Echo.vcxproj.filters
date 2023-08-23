@@ -36,6 +36,12 @@
     <ClCompile Include="LoadingWindowGUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MWhisper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DropdownList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils.h">
@@ -66,6 +72,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MWhisper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DropdownList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
