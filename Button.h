@@ -1,7 +1,10 @@
 #pragma once
+#include <string>
 
-#include "raylib-cpp.hpp"
-#include <iostream>
+#include "Rectangle.hpp"
+#include "Text.hpp"
+#include "raylib.h"
+
 
 class Button {
 private:
@@ -29,8 +32,6 @@ public:
 		_font = font;
 	}
 
-	// friend class Screen;
-
 	void setTextColor(Color color)
 	{
 		btnText.color = color;
@@ -49,7 +50,7 @@ public:
 
 	}
 
-	void draw(std::string buttonText) {
+	void Draw(std::string buttonText) {
 		DrawRectangleLines(button.GetX() - 1, button.GetY() - 1, button.GetWidth() + 2, button.GetHeight() + 2, LIGHTGRAY);
 		button.Draw(_color);
 		btnText.SetText(buttonText);
