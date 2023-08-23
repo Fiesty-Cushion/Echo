@@ -1,9 +1,9 @@
 #pragma once
-#include <string>
 
-#include "Rectangle.hpp"
-#include "Text.hpp"
-#include "raylib.h"
+#include <string>
+#include <raylib.h>
+#include <raylib-cpp/Rectangle.hpp>
+#include <raylib-cpp/Text.hpp>
 
 
 class Button {
@@ -17,7 +17,7 @@ public:
 	float textX;
 	float textY;
 
-	Button() { }
+	Button() : button({0,0,0,0}), btnText(""), _color(BLANK), _font(GetFontDefault()) { }
 
 	Button(std::string text, Vector2 size, Color bgColor, Color textColor, Font font)
 	{
