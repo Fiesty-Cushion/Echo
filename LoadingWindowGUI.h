@@ -1,6 +1,10 @@
 #pragma once
+
+#include <raylib.h>
+#include <pl_mpeg.h>
+
 #include "GUI.h"
-#include "pl_mpeg.h"
+
 
 class LoadingWindowGUI : public GUI
 {
