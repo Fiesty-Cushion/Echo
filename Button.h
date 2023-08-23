@@ -17,7 +17,7 @@ public:
 	float textX;
 	float textY;
 
-	Button() : button({0,0,0,0}), btnText(""), _color(BLANK), _font(GetFontDefault()) { }
+	Button() {}
 
 	Button(std::string text, Vector2 size, Color bgColor, Color textColor, Font font)
 	{
