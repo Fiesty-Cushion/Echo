@@ -41,8 +41,11 @@
     <ClInclude Include="Modes.h" />
     <ClInclude Include="STTWindowGUI.h" />
     <ClInclude Include="SubtitleWindowGUI.h" />
+    <ClInclude Include="ScriptUtils.h" />
+    <ClInclude Include="StringUtils.h" />
     <ClInclude Include="TextBox.h" />
     <ClInclude Include="Transcriber.h" />
+    <ClInclude Include="VideoUtils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -49,6 +49,9 @@ void MainWindowGUI::Init()
 	sttScreen.Init();
 	subtitleScreen.Init();
 	karaokeScreen.Init();
+	audio = new Audio();
+	transcriber = new Transcriber(*audio);
+
 }
 
 void MainWindowGUI::StartLoop()
@@ -94,6 +97,9 @@ void MainWindowGUI::Draw()
 		}
 		
 
+		// TEST ONLY
+		karaokeButton.Draw("Karaoke");
+
 	}
 	EndDrawing();
 
@@ -114,6 +120,8 @@ void MainWindowGUI::HandleEvents()
 		if (result == NFD_OKAY)
 		{
 			modelTextBox.inputText = outPath;
+			audio->StartStream(RealTime);
+			isInitialClick = false;
 		}
 		else if (result == NFD_CANCEL)
 		{
@@ -136,6 +144,25 @@ void MainWindowGUI::HandleEvents()
 	else if (screen == Karaoke_Screen)
 	{
 		karaokeScreen.HandleEvents();		
+	}
+
+
+	// TEST ONLY
+	/*if (karaokeButton.isPressed()) {
+
+		std::string inputPath = "./Samples/chacha.wav";
+		std::string outputDir = "./Samples";
+
+		transcriber->GenerateKaraoke(inputPath.c_str(), outputDir.c_str());
+	}*/
+
+	if (karaokeButton.isPressed())
+	{
+		std::string videoPath = "./Samples/dsblong.mp4";
+		std::string outputDir = "./Samples";
+
+		transcriber->BurnInSubtitles(videoPath.c_str(), outputDir.c_str());
+		
 	}
 
 	// FOR TRANSCRIPTION FROM WAV FILE //

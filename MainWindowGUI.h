@@ -20,7 +20,6 @@
 #include <nfd.h>
 #include <raylib-cpp/Texture.hpp>
 
-
 class MainWindowGUI : public GUI
 {
 private:
@@ -54,6 +53,9 @@ private:
 		text.SetSpacing(1);
 		text.SetColor(MTEXT);
 	}
+	// TEST ONLY
+	Button karaokeButton;
+
 
 public:
 	void Init();
