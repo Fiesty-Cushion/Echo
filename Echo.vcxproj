@@ -35,6 +35,8 @@
     <ClInclude Include="LoadingWindowGUI.h" />
     <ClInclude Include="MainWindowGUI.h" />
     <ClInclude Include="Modes.h" />
+    <ClInclude Include="ScriptUtils.h" />
+    <ClInclude Include="StringUtils.h" />
     <ClInclude Include="TextBox.h" />
     <ClInclude Include="Transcriber.h" />
   </ItemGroup>

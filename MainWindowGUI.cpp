@@ -42,6 +42,14 @@ void MainWindowGUI::Init()
 	for (int i = 0; i < wave.numCharacters; i++) {
 		wave.characterOffset[i] = 0.0f;
 	}
+
+	audio = new Audio();
+	transcriber = new Transcriber(*audio);
+
+	// TEST ONLY
+	karaokeButton = Button("Start", { 100, 40 }, MBG, MTEXT, m_font);
+	karaokeButton.setPosition({ 542+100, 350 });
+
 }
 
 void MainWindowGUI::StartLoop()
@@ -73,6 +81,9 @@ void MainWindowGUI::Draw()
 
 		transcribeButton.Draw(isTranscribing ? "Stop" : "Start");
 
+		// TEST ONLY
+		karaokeButton.Draw("Karaoke");
+
 	}
 	EndDrawing();
 
@@ -96,9 +107,7 @@ void MainWindowGUI::HandleEvents()
 		// only start the stream once
 		if (isInitialClick)
 		{
-			audio = new Audio();
 			audio->StartStream(RealTime);
-			transcriber = new Transcriber(*audio);
 			isInitialClick = false;
 		}
 
@@ -118,6 +127,22 @@ void MainWindowGUI::HandleEvents()
 			std::cout << outputTextBox.inputText;
 			std::cout << std::flush;
 		}
+	}
+
+
+	// TEST ONLY
+	if (karaokeButton.isPressed()) {
+		std::vector<float> pcm32fWav;
+		std::vector<std::vector<float>> pcmf32sWav;
+		bool stereo = false;
+
+		std::string inputPath = "./Samples/chacha.wav";
+		std::string outputDir = "./Samples";
+
+		audio->readPCMFromWav(inputPath, pcm32fWav, pcmf32sWav, stereo);
+		transcriber->GenerateKaraoke(inputPath.c_str(), outputDir.c_str(), pcm32fWav, pcmf32sWav);
+
+
 	}
 
 	// FOR TRANSCRIPTION FROM WAV FILE //

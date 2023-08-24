@@ -49,6 +49,9 @@ private:
 		text.SetSpacing(1);
 		text.SetColor(MTEXT);
 	}
+	// TEST ONLY
+	Button karaokeButton;
+
 
 public:
 	void Init();
