@@ -49,9 +49,15 @@ void MainWindowGUI::Init()
 	sttScreen.Init();
 	subtitleScreen.Init();
 	karaokeScreen.Init();
-	audio = new Audio();
-	transcriber = new Transcriber(*audio);
 
+	raygui_font = raylib::Font(m_font_path.c_str(), 24);
+	GuiSetFont(raygui_font);
+	GuiSetStyle(DROPDOWNBOX, BASE_COLOR_NORMAL, 0xEEEEEEFF);
+	GuiSetStyle(DROPDOWNBOX, TEXT_COLOR_NORMAL, 0x1D2B53FF);
+	GuiSetStyle(DROPDOWNBOX, BASE_COLOR_FOCUSED, 0x00000000);
+	GuiSetStyle(DROPDOWNBOX, BASE_COLOR_PRESSED, 0x00000000);
+	GuiSetStyle(DROPDOWNBOX, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
+	GuiSetStyle(DROPDOWNBOX, ARROW_PADDING, 30);
 }
 
 void MainWindowGUI::StartLoop()
@@ -95,10 +101,6 @@ void MainWindowGUI::Draw()
 		{
 			karaokeScreen.Draw();
 		}
-		
-
-		// TEST ONLY
-		karaokeButton.Draw("Karaoke");
 
 	}
 	EndDrawing();
@@ -120,8 +122,6 @@ void MainWindowGUI::HandleEvents()
 		if (result == NFD_OKAY)
 		{
 			modelTextBox.inputText = outPath;
-			audio->StartStream(RealTime);
-			isInitialClick = false;
 		}
 		else if (result == NFD_CANCEL)
 		{
@@ -155,15 +155,6 @@ void MainWindowGUI::HandleEvents()
 
 		transcriber->GenerateKaraoke(inputPath.c_str(), outputDir.c_str());
 	}*/
-
-	if (karaokeButton.isPressed())
-	{
-		std::string videoPath = "./Samples/dsblong.mp4";
-		std::string outputDir = "./Samples";
-
-		transcriber->BurnInSubtitles(videoPath.c_str(), outputDir.c_str());
-		
-	}
 
 	// FOR TRANSCRIPTION FROM WAV FILE //
 	// if (button2.isPressed()) {

@@ -10,6 +10,7 @@
 #include "Button.h"
 #include "TextBox.h"
 #include <nfd.h>
+#include "Transcriber.h"
 
 
 class KaraokeWindowGUI : public GUI
@@ -28,6 +29,9 @@ private:
 
 	raylib::Image karExportIcon;
 	Texture2D karExportIconTexture;
+
+	Audio* audio;
+	Transcriber* transcriber;
 
 	void setupDisplayText(raylib::Text& text, std::string message, int fontSize = 32, raylib::Font& font = m_font)
 	{

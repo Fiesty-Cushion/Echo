@@ -22,6 +22,9 @@ void KaraokeWindowGUI::Init()
 
     setupDisplayText(karExportText, "Save File To");
 
+    audio = new Audio();
+    transcriber = new Transcriber(*audio);
+
 }
 
 void KaraokeWindowGUI::Draw()
@@ -57,6 +60,15 @@ void KaraokeWindowGUI::HandleEvents()
         {
             printf("Error: %s\n", NFD_GetError());
         }
+    }
+
+    if (karaokeButton.isPressed())
+    {
+        std::string videoPath = "./Samples/dsblong.mp4";
+        std::string outputDir = "./Samples";
+
+        transcriber->BurnInSubtitles(videoPath.c_str(), outputDir.c_str());
+
     }
 
 }

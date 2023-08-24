@@ -9,6 +9,9 @@ void STTWindowGUI::Init()
 	transcribeButton.setPosition({ 542, 350 });
 
 	outputTextBox = TextBox(70, 400, 1138, 277);
+
+	panelRec = { outputTextBox.getX(), outputTextBox.getY(), outputTextBox.getWidth(), outputTextBox.getHeight() };
+	panelContentRec = { 0, 0, outputTextBox.getWidth(), 500};
 }
 
 void STTWindowGUI::Draw()
@@ -16,11 +19,14 @@ void STTWindowGUI::Draw()
 	sttText.Draw({ 72, 334 });
 
 	outputTextBox.Draw();
-	//outputTextBox.DrawTextBoxed(m_font, outputTextBox.inputText.c_str(), Rectangle{ outputTextBox.getX() + 10, outputTextBox.getY() + 10 , outputTextBox.getWidth() - 20, outputTextBox.getHeight() - 20 }, 20, 1, true, MTEXT);
 	
-	GuiTextBox(Rectangle{ outputTextBox.getX() + 10, outputTextBox.getY() + 10 , outputTextBox.getWidth() - 20, outputTextBox.getHeight() - 20 }, (char*)outputTextBox.inputText.c_str(), 16,false);
-
 	transcribeButton.Draw(isTranscribing ? "Stop" : "Start");
+
+	GuiScrollPanel(panelRec, NULL, panelContentRec, &panelScroll, &panelView);
+
+	BeginScissorMode(outputTextBox.getX(), outputTextBox.getY(), outputTextBox.getWidth(), outputTextBox.getHeight());
+		outputTextBox.DrawTextBoxed(m_font, outputTextBox.inputText.c_str(), Rectangle{ outputTextBox.getX() + 10 + panelScroll.x, outputTextBox.getY() + 10 + panelScroll.y, outputTextBox.getWidth() - 20, 1000 }, 20, 1, true, MTEXT);
+	EndScissorMode();
 
 }
 

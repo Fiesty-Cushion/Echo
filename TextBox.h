@@ -207,6 +207,11 @@ public:
 					inputText += static_cast<char>(charrr);
 					text.SetText(inputText);
 				}
+                else if (key == 257)
+                {
+                    std::cout << "Enter Pressed" << std::endl;
+                    inputText += "\n";
+                }
 				else if (IsKeyPressed(KEY_BACKSPACE) && (inputText.length() > 0)) {
 					inputText.pop_back();
 					text.SetText(inputText);

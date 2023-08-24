@@ -12,15 +12,20 @@ class STTWindowGUI : public GUI
 private:
 	raylib::Text sttText;
 
+	bool isInitialClick = true;
+	bool isTranscribing = false;
+
 	Audio* audio;
 	Transcriber* transcriber;
 
 	Button transcribeButton;
-	bool isInitialClick = true;
-
-	bool isTranscribing = false;
 
 	TextBox outputTextBox;
+
+	Rectangle panelRec;
+	Rectangle panelContentRec;
+	Rectangle panelView = { 0 };
+	Vector2 panelScroll = { 99, -20 };
 
 	void setupDisplayText(raylib::Text& text, std::string message, int fontSize = 32, raylib::Font& font = m_font)
 	{
