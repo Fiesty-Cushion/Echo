@@ -86,6 +86,7 @@ Transcriber::~Transcriber()
     if (worker.joinable())
         worker.join();
     whisper_free(ctx);
+    whisper_free(karaoke_ctx);
 }
 
 /** Add audio data in PCM f32 format. */
@@ -452,6 +453,5 @@ bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir, 
         fprintf(stderr, "%s: Karaoke created at : '%s'\n", __func__, outputVideo.c_str());
     }
 
-    whisper_free(karaoke_ctx);
     return result;
 }
