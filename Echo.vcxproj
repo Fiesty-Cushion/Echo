@@ -21,9 +21,12 @@
   <ItemGroup>
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Globals.cpp" />
+    <ClCompile Include="KaraokeWindowGUI.cpp" />
     <ClCompile Include="LoadingWindowGUI.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindowGUI.cpp" />
+    <ClCompile Include="STTWindowGUI.cpp" />
+    <ClCompile Include="SubtitleWindowGUI.cpp" />
     <ClCompile Include="Transcriber.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -32,9 +35,12 @@
     <ClInclude Include="DropdownList.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="GUI.h" />
+    <ClInclude Include="KaraokeWindowGUI.h" />
     <ClInclude Include="LoadingWindowGUI.h" />
     <ClInclude Include="MainWindowGUI.h" />
     <ClInclude Include="Modes.h" />
+    <ClInclude Include="STTWindowGUI.h" />
+    <ClInclude Include="SubtitleWindowGUI.h" />
     <ClInclude Include="TextBox.h" />
     <ClInclude Include="Transcriber.h" />
   </ItemGroup>
