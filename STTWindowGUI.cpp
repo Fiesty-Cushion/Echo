@@ -1,4 +1,5 @@
 #include "STTWindowGUI.h"
+#include <raygui.h>
 
 void STTWindowGUI::Init()
 {
@@ -15,7 +16,9 @@ void STTWindowGUI::Draw()
 	sttText.Draw({ 72, 334 });
 
 	outputTextBox.Draw();
-	outputTextBox.DrawTextBoxed(m_font, outputTextBox.inputText.c_str(), Rectangle{ outputTextBox.getX() + 10, outputTextBox.getY() + 10 , outputTextBox.getWidth() - 20, outputTextBox.getHeight() - 20 }, 20, 1, true, MTEXT);
+	//outputTextBox.DrawTextBoxed(m_font, outputTextBox.inputText.c_str(), Rectangle{ outputTextBox.getX() + 10, outputTextBox.getY() + 10 , outputTextBox.getWidth() - 20, outputTextBox.getHeight() - 20 }, 20, 1, true, MTEXT);
+	
+	GuiTextBox(Rectangle{ outputTextBox.getX() + 10, outputTextBox.getY() + 10 , outputTextBox.getWidth() - 20, outputTextBox.getHeight() - 20 }, (char*)outputTextBox.inputText.c_str(), 16,false);
 
 	transcribeButton.Draw(isTranscribing ? "Stop" : "Start");
 
