@@ -16,7 +16,7 @@ void LoadingWindowGUI::Init()
 	InitWindow(screenWidth, screenHeight, "Echo - Loading Screen");
 	SetTargetFPS(120);
 
-	plm = plm_create_with_filename("../Resources/Echoo.mpeg");
+	plm = plm_create_with_filename("./Resources/Intro.mpeg");
 
 	if (!plm) {
 		std::cerr << "Loading Window Path Not Found !!!" << std::endl;

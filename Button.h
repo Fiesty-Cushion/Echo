@@ -64,11 +64,6 @@ public:
 		btnText.Draw(textX, textY);
 	}
 
-	void DrawIcon(int iconId)
-	{
-		//GuiDrawIcon(iconId, button.GetX(), button.GetX(), 24, MTEXT);
-	}
-
 	bool isMouseOver()
 	{
 		Vector2 mousePos = GetMousePosition();

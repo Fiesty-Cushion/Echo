@@ -71,9 +71,10 @@ void MainWindowGUI::Draw()
 		modelSelectText.Draw({ 72, 114 });
 		modelTextBox.Draw();
 		modelTextBox.DrawTextBoxed(m_font, modelTextBox.inputText.c_str(), Rectangle{modelTextBox.getX() + 10, modelTextBox.getY() + 10 , modelTextBox.getWidth() - 20, modelTextBox.getHeight() - 20}, 20, 1, false, MTEXT);
+		
 		modelTextBoxButton.Draw("");
 		DrawTexture(importIconTexture, modelTextBoxButton.getPosition().x + 5, modelTextBoxButton.getPosition().y + 5, MPINK);
-		
+
 		featuresText.Draw({ 977, 110 });
 		dropdownList.Draw();
 
