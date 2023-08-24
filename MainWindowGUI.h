@@ -7,39 +7,34 @@
 
 #include "Globals.h"
 #include "GUI.h"
+#include "Modes.h"
 #include "TextBox.h"
 #include "Transcriber.h"
 #include "DropdownList.h"
 #include "Button.h"
 #include "Audio.h"
+#include "STTWindowGUI.h"
+#include "SubtitleWindowGUI.h"
+#include "KaraokeWindowGUI.h"
 
 
 class MainWindowGUI : public GUI
 {
 private:
+	Screen screen;
 	TextWave wave;
 
 	raylib::Text titleText;
 	raylib::Text modelSelectText;
-	raylib::Text sttText;
 	raylib::Text featuresText;
 
 	DropdownList dropdownList;
 
-	Audio* audio;
-	Transcriber* transcriber;
-
-	Button transcribeButton;
-	bool isInitialClick = true;
-
-	bool isTranscribing = false;
-
 	TextBox modelTextBox;
-	TextBox outputTextBox;
 
-	raylib::Rectangle subtitle_Box;
-	raylib::Rectangle lyrics_Box;
-	raylib::Rectangle karaoke_Box;
+	STTWindowGUI sttScreen;
+	SubtitleWindowGUI subtitleScreen;
+	KaraokeWindowGUI karaokeScreen;
 
 	void setupDisplayText(raylib::Text& text, std::string message, int fontSize = 32, raylib::Font& font = m_font)
 	{

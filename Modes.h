@@ -6,3 +6,10 @@ enum Modes
 	Subtitles,
 	Lyrics
 };
+
+enum Screen
+{
+	RealTime_Screen = 0,
+	Subtitle_Screen,
+	Karaoke_Screen
+};

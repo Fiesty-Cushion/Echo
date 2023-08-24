@@ -1,12 +1,9 @@
 #include "MainWindowGUI.h"
-#include "Transcriber.h"
 #include "Globals.h"
 #include "TextBox.h"
-#include "Button.h"
 #include "DropdownList.h"
 
 #include <math.h>
-#include "Audio.h"
 
 
 void MainWindowGUI::Init()
@@ -17,6 +14,8 @@ void MainWindowGUI::Init()
 	window = new raylib::Window(screenWidth, screenHeight, "Echo - Speech To Text");
 	SetTargetFPS(120);
 
+	screen = RealTime_Screen;
+
 	m_font = raylib::Font(m_font_path);
 	GenTextureMipmaps(&m_font.texture);
 	SetTextureFilter(m_font.texture, TEXTURE_FILTER_ANISOTROPIC_8X);
@@ -25,16 +24,11 @@ void MainWindowGUI::Init()
 
 	setupDisplayText(titleText, "Echo - Speech to Text", 48, m_font_title);
 	setupDisplayText(modelSelectText, "Select a Language Model: ");
-	setupDisplayText(sttText, "Real-Time Speech to Text: ");
 	setupDisplayText(featuresText, "Features");
 
 	dropdownList = DropdownList(930, 165, 200, 50);
 
-	transcribeButton = Button("Start", { 100, 40 }, MBG, MTEXT, m_font);
-	transcribeButton.setPosition({ 542, 350 });
-
 	modelTextBox = TextBox(72, 170, 506.5, 45);
-	outputTextBox = TextBox(70, 400, 1138, 277);
 
 	wave.numCharacters = titleText.GetText().length();
 	wave.characterOffset = new float[wave.numCharacters];
@@ -42,6 +36,10 @@ void MainWindowGUI::Init()
 	for (int i = 0; i < wave.numCharacters; i++) {
 		wave.characterOffset[i] = 0.0f;
 	}
+
+	sttScreen.Init();
+	subtitleScreen.Init();
+	karaokeScreen.Init();
 }
 
 void MainWindowGUI::StartLoop()
@@ -62,16 +60,26 @@ void MainWindowGUI::Draw()
 		addHoverEffect(titleText, &wave, (screenWidth / 2 - titleText.MeasureEx().GetX() / 2) - 20, 10);
 
 		modelSelectText.Draw({ 72, 114 });
-		sttText.Draw({ 72, 334 });
-
+		modelTextBox.Draw();
+		
 		featuresText.Draw({ 977, 110 });
 		dropdownList.Draw();
 
-		modelTextBox.Draw();
-		outputTextBox.Draw();
-		outputTextBox.DrawTextBoxed(m_font, outputTextBox.inputText.c_str(), Rectangle{outputTextBox.getX() + 10, outputTextBox.getY() + 10 , outputTextBox.getWidth() - 20, outputTextBox.getHeight() - 20}, 20, 1, true, MTEXT);
+		screen = dropdownList.getSelected();
 
-		transcribeButton.Draw(isTranscribing ? "Stop" : "Start");
+		if (screen == RealTime_Screen)
+		{
+			sttScreen.Draw();
+		} 
+		else if (screen == Subtitle_Screen)
+		{
+			subtitleScreen.Draw();
+		}
+		else if (screen == Karaoke_Screen)
+		{
+			karaokeScreen.Draw();
+		}
+		
 
 	}
 	EndDrawing();
@@ -84,40 +92,19 @@ void MainWindowGUI::Draw()
 void MainWindowGUI::HandleEvents()
 {
 	modelTextBox.Update();
-	outputTextBox.Update();
 	dropdownList.Update();
 
-
-	//....Event Handlers....//
-	if (transcribeButton.isPressed())
+	if (screen == RealTime_Screen)
 	{
-		isTranscribing = !isTranscribing;
-
-		// only start the stream once
-		if (isInitialClick)
-		{
-			audio = new Audio();
-			audio->StartStream(RealTime);
-			transcriber = new Transcriber(*audio);
-			isInitialClick = false;
-		}
-
-		if (isTranscribing)
-			takeMicrophoneInput = true;
-		else
-			takeMicrophoneInput = false;
-
+		sttScreen.HandleEvents();
 	}
-
-	if (isTranscribing)
+	else if (screen == Subtitle_Screen)
 	{
-		const std::vector<transcribed_msg>& transcribedData= transcriber->GetTranscribed();
-		if (!transcribedData.empty())
-		{
-			outputTextBox.inputText += (transcribedData.back().is_partial || (transcribedData.back().text == outputTextBox.inputText)) ? "" : transcribedData.back().text;
-			std::cout << outputTextBox.inputText;
-			std::cout << std::flush;
-		}
+		subtitleScreen.HandleEvents();
+	}
+	else if (screen == Karaoke_Screen)
+	{
+		karaokeScreen.HandleEvents();		
 	}
 
 	// FOR TRANSCRIPTION FROM WAV FILE //
@@ -139,8 +126,6 @@ void MainWindowGUI::HandleEvents()
 
 void MainWindowGUI::ShutDown()
 {
-	delete audio;
-	delete transcriber;
 	m_font.Unload();
 	delete window;
 }

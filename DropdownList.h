@@ -35,6 +35,22 @@ public:
 
 	}
 
+	Screen getSelected()
+	{
+		if (active == 0)
+		{
+			return RealTime_Screen;
+		}
+		else if (active == 1)
+		{
+			return Subtitle_Screen;
+		}
+		else
+		{
+			return Karaoke_Screen;
+		}
+	}
+
 	void Draw()
 	{
         selected = GuiDropdownBox(Rectangle{ dropdownList.GetX(), dropdownList.GetY(), dropdownList.GetWidth(), dropdownList.GetHeight()}, "Real Time; Subtitle; Karaoke", &active, editMode);
