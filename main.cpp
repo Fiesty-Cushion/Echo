@@ -9,10 +9,10 @@
 
 int main()
 {
-	 LoadingWindowGUI lGUI;
+	 /*LoadingWindowGUI lGUI;
 	 lGUI.Init();
 	 lGUI.StartLoop();
-	 lGUI.ShutDown();
+	 lGUI.ShutDown();*/
 
 	MainWindowGUI mGUI;
 	mGUI.Init();

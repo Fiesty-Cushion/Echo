@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <cstring>
 #include "ScriptUtils.h"
+#include <pl_mpeg.h>
+#include <raylib.h>
 
 class VideoUtils
 {
@@ -56,5 +58,48 @@ public:
         int result = std::system(command.c_str());
 
         return result == 0;
+    }
+
+    static bool ConvertToMpeg(const std::string videoPath, const std::string mpegOutput)
+    {
+        std::string command = "ffmpeg -i " + videoPath + " -c:v mpeg1video -q:v 0 -c:a mp2 -format mpeg " + mpegOutput + " -y";
+        int result = std::system(command.c_str());
+        return result == 0;
+    }
+
+    static Texture GetFrameFromVideo(const std::string videoPath)
+    {
+        plm_t* plm = plm_create_with_filename(videoPath.c_str());
+
+        if (!plm) {
+            std::cerr << "Failed To Load Video !!!" << std::endl;
+            std::exit(-1);
+        }
+
+        double framerate = plm_get_framerate(plm);
+
+        int width = plm_get_width(plm);
+        int height = plm_get_height(plm);
+
+        plm_samples_t* sample = NULL;
+
+        Image imFrame = { 0 };
+
+        imFrame.width = width;
+        imFrame.height = height;
+        imFrame.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8;
+        imFrame.mipmaps = 1;
+        imFrame.data = (unsigned char*)malloc(width * height * 3);
+
+        Texture vid_texture = LoadTextureFromImage(imFrame);
+        plm_frame_t* frame;
+        for (int i = 0; i < 20; i++)
+        {
+            frame = plm_skip_video_frame(plm);
+        }
+        plm_frame_to_rgb(frame, static_cast<uint8_t*>(imFrame.data));
+        UpdateTexture(vid_texture, static_cast<uint8_t*>(imFrame.data));
+
+        return vid_texture;
     }
 };

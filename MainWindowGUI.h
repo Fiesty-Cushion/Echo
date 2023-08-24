@@ -26,9 +26,6 @@ private:
 	Screen screen;
 	TextWave wave;
 
-	raylib::Image importIconPNG;
-	Texture2D importIconTexture;
-
 	raylib::Text titleText;
 	raylib::Text modelSelectText;
 	raylib::Text featuresText;

@@ -3,6 +3,7 @@
 #include "GUI.h"
 #include "Globals.h"
 
+#include <iostream>
 #include <raylib-cpp/Text.hpp>
 #include <raylib-cpp/Font.hpp>
 #include <nfd.h>
@@ -16,8 +17,10 @@ class SubtitleWindowGUI : public GUI
 private:
 	raylib::Text subtitleText;
 	raylib::Text srtExportText;
+	raylib::Text promptText;
 
 	Button subtitleButton;
+	Button subtitleImportButton;
 	
 	TextBox outDirBox;
 	Button outDirBoxButton;
@@ -25,8 +28,12 @@ private:
 	nfdchar_t* outPath = NULL;
 	nfdresult_t result;
 
-	raylib::Image srtExportIcon;
-	Texture2D srtExportIconTexture;
+	std::string subtitleInputPath;
+
+	Texture frame;
+	Image frameImage;
+
+	bool displayVideoFrame = false;
 
 	void setupDisplayText(raylib::Text& text, std::string message, int fontSize = 32, raylib::Font& font = m_font)
 	{

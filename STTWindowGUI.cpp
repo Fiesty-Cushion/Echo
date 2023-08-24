@@ -17,8 +17,6 @@ void STTWindowGUI::Init()
 void STTWindowGUI::Draw()
 {
 	sttText.Draw({ 72, 334 });
-
-	outputTextBox.Draw();
 	
 	transcribeButton.Draw(isTranscribing ? "Stop" : "Start");
 

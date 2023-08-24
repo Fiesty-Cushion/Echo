@@ -34,11 +34,6 @@ void MainWindowGUI::Init()
 	modelTextBoxButton = Button("", { 45, 45 }, MBG, MTEXT, m_font);
 	modelTextBoxButton.setPosition({ 620, 192 });
 
-	importIconPNG = raylib::Image("./Resources/import.png");
-	importIconPNG.Resize(modelTextBoxButton.getSize().x - 10, modelTextBoxButton.getSize().y - 10);
-	importIconTexture = LoadTextureFromImage(importIconPNG);
-	importIconPNG.Unload();
-
 	wave.numCharacters = titleText.GetText().length();
 	wave.characterOffset = new float[wave.numCharacters];
 
@@ -82,7 +77,7 @@ void MainWindowGUI::Draw()
 		modelTextBox.DrawTextBoxed(m_font, modelTextBox.inputText.c_str(), Rectangle{modelTextBox.getX() + 10, modelTextBox.getY() + 10 , modelTextBox.getWidth() - 20, modelTextBox.getHeight() - 20}, 20, 1, false, MTEXT);
 		
 		modelTextBoxButton.Draw("");
-		DrawTexture(importIconTexture, modelTextBoxButton.getPosition().x + 5, modelTextBoxButton.getPosition().y + 5, MPINK);
+		GuiDrawIcon(1, modelTextBoxButton.getPosition().x + 6, modelTextBoxButton.getPosition().y + 5, 2, MTEXT);
 
 		featuresText.Draw({ 977, 110 });
 		dropdownList.Draw();
