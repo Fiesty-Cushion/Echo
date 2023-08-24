@@ -1,7 +1,13 @@
 #include "MainWindowGUI.h"
-#include "TextBox.h"
+#include "Transcriber.h"
 #include "Globals.h"
-#include "raylib-cpp.hpp"
+#include "TextBox.h"
+#include "Button.h"
+#include "DropdownList.h"
+
+#include <math.h>
+#include "Audio.h"
+
 
 void MainWindowGUI::Init()
 {
@@ -9,35 +15,33 @@ void MainWindowGUI::Init()
 	screenHeight = 720;
 
 	window = new raylib::Window(screenWidth, screenHeight, "Echo - Speech To Text");
-	SetTargetFPS(60);
+	SetTargetFPS(120);
 
 	m_font = raylib::Font(m_font_path);
-	
-	setupDisplayText(title_Text, "Echo - Speech to Text", 40);
-	setupDisplayText(model_Text, "Select a Language Model: ");
-	setupDisplayText(display_Text, "Real-Time Text to Speech: ");
-	setupDisplayText(subtitle_Text, "Subtitle Generation: ");
-	setupDisplayText(lyrics_Text, "Lyrics Generation: ");
-	setupDisplayText(karaoke_Text, "Karaoke Generation: ");
+	GenTextureMipmaps(&m_font.texture);
+	SetTextureFilter(m_font.texture, TEXTURE_FILTER_ANISOTROPIC_8X);
 
+	m_font_title = raylib::Font(m_font_path, 48);
 
-	subtitle_Box.SetPosition({ 926.7, 189.3 });
-	subtitle_Box.SetSize({ 281.3, 54.6 });
-	lyrics_Box.SetPosition({ 926.7, 330.1 });
-	lyrics_Box.SetSize({ 281.3, 54.6 });
-	karaoke_Box.SetPosition({ 926.7, 471 });
-	karaoke_Box.SetSize({ 281.3, 54.6 });
+	setupDisplayText(titleText, "Echo - Speech to Text", 48, m_font_title);
+	setupDisplayText(modelSelectText, "Select a Language Model: ");
+	setupDisplayText(sttText, "Real-Time Speech to Text: ");
+	setupDisplayText(featuresText, "Features");
 
-	
+	dropdownList = DropdownList(930, 165, 200, 50);
 
+	transcribeButton = Button("Start", { 100, 40 }, MBG, MTEXT, m_font);
+	transcribeButton.setPosition({ 542, 350 });
 
-	
+	modelTextBox = TextBox(72, 170, 506.5, 45);
+	outputTextBox = TextBox(70, 400, 1138, 277);
 
-	button1 = Button("Start", { 100, 40 }, LGRAY, MGRAY, m_font);
-	// button2 = Button("Exit", { 100, 40 }, BLUE, MGRAY, *font);
+	wave.numCharacters = titleText.GetText().length();
+	wave.characterOffset = new float[wave.numCharacters];
 
-	button1.setPosition({ 403, 300 });
-	// button2.setPosition({ screenWidth / 2, screenHeight / 2 + 50 });
+	for (int i = 0; i < wave.numCharacters; i++) {
+		wave.characterOffset[i] = 0.0f;
+	}
 }
 
 void MainWindowGUI::StartLoop()
@@ -53,83 +57,70 @@ void MainWindowGUI::Draw()
 {
 	BeginDrawing();
 	{
-		window->ClearBackground(MBG);
-		
-		title_Text.Draw({ static_cast<float>( screenWidth/2 - title_Text.MeasureEx().GetX()/2 ), 56.2 });
-		model_Text.Draw({ 72, 142.8 });
-		display_Text.Draw({ 72, 308.3 });
-		subtitle_Text.Draw({ 926.7, 142.8 });
-		lyrics_Text.Draw({ 926.7, 283.9 });
-		karaoke_Text.Draw({ 926.7, 424.8 });
+		window->ClearBackground(RAYWHITE);
 
-		// std::cout << (screenWidth / 2) - (title_Text.MeasureEx().GetX() / 2) << std::endl;
+		addHoverEffect(titleText, &wave, (screenWidth / 2 - titleText.MeasureEx().GetX() / 2) - 20, 10);
 
-		model_Text.Draw({72, 142.8});
+		modelSelectText.Draw({ 72, 114 });
+		sttText.Draw({ 72, 334 });
 
-		modelTextBox.Draw( 72, 194.7 , 506.5, 45);
-		outputTextBox.Draw( 69.8, 371 , 714.7, 277);
-		outputTextBox.DrawTextBoxed(m_font, transcribedText.c_str(), Rectangle {69.8 + 10, 371 + 10 , 714.7 - 20, 277 - 20}, 20, 1, true, MGRAY);
-		
+		featuresText.Draw({ 977, 110 });
+		dropdownList.Draw();
 
-		subtitle_Box.Draw(LGRAY);
-		lyrics_Box.Draw(LGRAY);
-		karaoke_Box.Draw(LGRAY);
+		modelTextBox.Draw();
+		outputTextBox.Draw();
+		outputTextBox.DrawTextBoxed(m_font, outputTextBox.inputText.c_str(), Rectangle{outputTextBox.getX() + 10, outputTextBox.getY() + 10 , outputTextBox.getWidth() - 20, outputTextBox.getHeight() - 20}, 20, 1, true, MTEXT);
 
-		DrawLine(0, screenHeight / 2, screenWidth, screenHeight / 2, RED);
-		DrawLine(screenWidth / 2, 0, screenWidth / 2, screenHeight, RED);
-		
-		button1.draw(isRunning ? "Stop" : "Start");
-		// button2.draw();
+		transcribeButton.Draw(isTranscribing ? "Stop" : "Start");
+
 	}
 	EndDrawing();
+
+	for (int i = 0; i < wave.numCharacters; i++) {
+		wave.characterOffset[i] = sinf(GetTime() * 3.0f + i * 3.0f) * 5.0f; // Adjust amplitude and speed
+	}
 }
 
 void MainWindowGUI::HandleEvents()
 {
-
 	modelTextBox.Update();
 	outputTextBox.Update();
-	// //....Hover Effect....//
-	// if (button1.isMouseOver())
-	// {
-	// 	button1.setBackgroundColor(LIGHTBLUE);
-	// }
-	// else
-	// {
-	// 	button1.setBackgroundColor(MGRAY);
-	// }
-
-	// if (button2.isMouseOver())
-	// {
-	// 	button2.setBackgroundColor(LIGHTBLUE);
-	// }
-	// else
-	// {
-	// 	button2.setBackgroundColor(MGRAY);
-	// }
+	dropdownList.Update();
 
 
 	//....Event Handlers....//
-	if (button1.isPressed())
+	if (transcribeButton.isPressed())
 	{
-		isRunning = !isRunning;
-		std::cout << "Pressed" << std::endl;
-		// For testing only
-		if (isRunning)
+		isTranscribing = !isTranscribing;
+
+		// only start the stream once
+		if (isInitialClick)
 		{
 			audio = new Audio();
-			transcriber = new Transcriber();
 			audio->StartStream(RealTime);
-			transcriber->BeginRealTimeTranscription();
+			transcriber = new Transcriber(*audio);
+			isInitialClick = false;
 		}
+
+		if (isTranscribing)
+			takeMicrophoneInput = true;
 		else
+			takeMicrophoneInput = false;
+
+	}
+
+	if (isTranscribing)
+	{
+		const std::vector<transcribed_msg>& transcribedData= transcriber->GetTranscribed();
+		if (!transcribedData.empty())
 		{
-			delete audio;
-			delete transcriber;
-			audio = nullptr;
-			transcriber = nullptr;
+			outputTextBox.inputText += (transcribedData.back().is_partial || (transcribedData.back().text == outputTextBox.inputText)) ? "" : transcribedData.back().text;
+			std::cout << outputTextBox.inputText;
+			std::cout << std::flush;
 		}
 	}
+
+	// FOR TRANSCRIPTION FROM WAV FILE //
 	// if (button2.isPressed()) {
 	// 	std::cout << "Subtitles Button Pressed" << std::endl;
 
@@ -143,10 +134,13 @@ void MainWindowGUI::HandleEvents()
 	// 	audio->readPCMFromWav("/Users/macbook/my_Files/Code/Echo/Audio/Recording.wav", pcm32fWav, pcmf32sWav, stereo);
 	// 	transcriber->TranscribeFromWav(pcm32fWav, 1);
 	// }
+
 }
 
 void MainWindowGUI::ShutDown()
 {
+	delete audio;
+	delete transcriber;
 	m_font.Unload();
 	delete window;
 }

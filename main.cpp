@@ -1,25 +1,22 @@
 #define PL_MPEG_IMPLEMENTATION
 #define _CRT_SECURE_NO_WARNINGS
+#define RAYGUI_IMPLEMENTATION 
 
-#pragma once
 #include "LoadingWindowGUI.h"
 #include "MainWindowGUI.h"
 
 
 int main()
 {
-	LoadingWindowGUI lGUI;
-	lGUI.Init();
-	lGUI.StartLoop();
-	lGUI.ShutDown();
+	// LoadingWindowGUI lGUI;
+	// lGUI.Init();
+	// lGUI.StartLoop();
+	// lGUI.ShutDown();
 
 	MainWindowGUI mGUI;
 	mGUI.Init();
 	mGUI.StartLoop();
 	mGUI.ShutDown();
-
-	// MenuGUI opGUI;
-	// opGUI.Draw();
 
 	return 0;
 }

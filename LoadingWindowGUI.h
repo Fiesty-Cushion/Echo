@@ -1,6 +1,10 @@
 #pragma once
+
+#include <raylib.h>
+#include <pl_mpeg.h>
+
 #include "GUI.h"
-#include "pl_mpeg.h"
+
 
 class LoadingWindowGUI : public GUI
 {
@@ -12,7 +16,7 @@ protected:
 	plm_t* plm;
 	plm_frame_t* frame = NULL;
 
-	Texture texture;
+	Texture vid_texture;
 	Image imFrame = { 0 };
 
 	double framerate;

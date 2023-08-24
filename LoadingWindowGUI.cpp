@@ -1,9 +1,12 @@
+#include <iostream>
+#include <pl_mpeg.h>
+
+#include "GUI.h"
 #include "LoadingWindowGUI.h"
-#include "raylib-cpp/raylib-cpp.hpp"
+
 
 void LoadingWindowGUI::Init()
 {
-
 	screenWidth = 1280;
 	screenHeight = 720;
 
@@ -16,8 +19,8 @@ void LoadingWindowGUI::Init()
 	plm = plm_create_with_filename("../Resources/Echoo.mpeg");
 
 	if (!plm) {
-		std::cout << "Loading Window Path Not Found !!!";
-		exit(-1);
+		std::cerr << "Loading Window Path Not Found !!!" << std::endl;
+		std::exit(-1);
 	}
 
 	framerate = plm_get_framerate(plm);
@@ -35,9 +38,8 @@ void LoadingWindowGUI::Init()
 	imFrame.mipmaps = 1;
 	imFrame.data = (unsigned char*)malloc(width * height * 3);
 
-	texture = LoadTextureFromImage(imFrame);
+	vid_texture = LoadTextureFromImage(imFrame);
 
-	//pause = false;
 	int framesCounter = 0;
 
 	baseTime = GetTime();    // Time since InitWindow()
@@ -60,7 +62,7 @@ void LoadingWindowGUI::Draw()
 
 	ClearBackground(BLANK);
 
-	DrawTexture(texture, GetScreenWidth() / 2 - texture.width / 2, GetScreenHeight() / 2 - texture.height / 2, WHITE);
+	DrawTexture(vid_texture, GetScreenWidth() / 2 - vid_texture.width / 2, GetScreenHeight() / 2 - vid_texture.height / 2, WHITE);
 	
 	EndDrawing();
 }
@@ -68,7 +70,7 @@ void LoadingWindowGUI::Draw()
 void LoadingWindowGUI::HandleEvents()
 {
 	
-		// Video should run at 'framerate' fps => One new frame every 1/framerate
+	// Video should run at 'framerate' fps => One new frame every 1/framerate
 	double time = (GetTime() - baseTime);
 
 	if (time >= (1.0 / framerate))
@@ -76,13 +78,13 @@ void LoadingWindowGUI::HandleEvents()
 		baseTime = GetTime();
 
 		// Decode video frame
-		frame = plm_decode_video(plm);          // Get frame as 3 planes: Y, Cr, Cb
+		frame = plm_decode_video(plm);  // Get frame as 3 planes: Y, Cr, Cb
 		if (frame != nullptr)
 		{
 			plm_frame_to_rgb(frame, static_cast<uint8_t*>(imFrame.data));  // Convert (Y, Cr, Cb) to RGB on the CPU (slow)
 
 			// Update texture
-			UpdateTexture(texture, static_cast<uint8_t*>(imFrame.data));
+			UpdateTexture(vid_texture, static_cast<uint8_t*>(imFrame.data));
 		}
 		else {
 			pause = true;
@@ -96,7 +98,7 @@ void LoadingWindowGUI::HandleEvents()
 void LoadingWindowGUI::ShutDown()
 {
 	UnloadImage(imFrame);
-	UnloadTexture(texture);
+	UnloadTexture(vid_texture);
 
 	plm_destroy(plm);
 

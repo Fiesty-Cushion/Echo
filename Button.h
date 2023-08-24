@@ -1,7 +1,10 @@
 #pragma once
 
-#include "raylib-cpp.hpp"
-#include <iostream>
+#include <string>
+#include <raylib.h>
+#include <raylib-cpp/Rectangle.hpp>
+#include <raylib-cpp/Text.hpp>
+
 
 class Button {
 private:
@@ -14,67 +17,14 @@ public:
 	float textX;
 	float textY;
 
-	Button() { }
+	Button() {}
+	Button(std::string , Vector2 , Color , Color , Font );
+	void setTextColor(Color );
+	void setPosition(Vector2 );
+	void Draw(std::string );
+	void setBackgroundColor(Color );
 
-	Button(std::string text, Vector2 size, Color bgColor, Color textColor, Font font)
-	{
-		btnText.text = text;
-		btnText.font = font;
-		btnText.fontSize = 18;
-		btnText.color = BLACK;
+	bool isMouseOver();
+	bool isPressed();
 
-		button.SetSize(size);
-
-		_color = bgColor;
-		_font = font;
-	}
-
-	// friend class Screen;
-
-	void setTextColor(Color color)
-	{
-		btnText.color = color;
-	}
-
-	void setPosition(Vector2 pos)
-	{
-		pos = { pos.x - button.GetWidth() / 2, pos.y - button.GetHeight() / 2 };
-
-		button.SetPosition(pos);
-
-		Vector2 textPos = MeasureTextEx(_font, btnText.text.c_str(), btnText.GetFontSize(), btnText.GetSpacing());
-
-		textX = (pos.x + button.GetWidth() / 2) - (textPos.x / 2);
-		textY = (pos.y + button.GetHeight() / 2) - (textPos.y / 2);
-
-	}
-
-	void draw(std::string buttonText) {
-		DrawRectangleLines(button.GetX() - 1, button.GetY() - 1, button.GetWidth() + 2, button.GetHeight() + 2, LIGHTGRAY);
-		button.Draw(_color);
-		btnText.SetText(buttonText);
-		btnText.Draw(textX, textY);
-	}
-
-	bool isMouseOver()
-	{
-		Vector2 mousePos = GetMousePosition();
-
-		bool isMouseOver = CheckCollisionPointRec(mousePos, button);
-		return isMouseOver;
-	}
-
-	bool isPressed()
-	{
-		if (IsMouseButtonPressed(0) && isMouseOver())
-		{
-			return true;
-		}
-		return false;
-	}
-
-	void setBackgroundColor(Color color)
-	{
-		_color = color;
-	}
 };

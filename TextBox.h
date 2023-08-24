@@ -1,19 +1,25 @@
 #pragma once
 
-#include <raylib-cpp.hpp>
-#include "Globals.h"
 #include <iostream>
+#include <raylib-cpp/Rectangle.hpp>
+#include <raylib.h>
+#include <raylib-cpp/Text.hpp>
+
+#include "Globals.h"
+#include <string>
+
 
 class TextBox {
 private:
 
 	raylib::Rectangle textBox;
-	bool active;
-	
+    raylib::Rectangle textBoxBorder;
 	raylib::Text text;
 
+	bool active;
+	
     // Draw text using font inside rectangle limits with support for text selection
-    static void DrawTextBoxedSelectable(Font font, const char* text, Rectangle rec, float fontSize, float spacing, bool wordWrap, Color tint, int selectStart, int selectLength, Color selectTint, Color selectBackTint)
+    void DrawTextBoxedSelectable(Font font, const char* text, Rectangle rec, float fontSize, float spacing, bool wordWrap, Color tint, int selectStart, int selectLength, Color selectTint, Color selectBackTint)
     {
         int length = TextLength(text);  // Total length in bytes of the text, scanned by codepoints in loop
 
@@ -82,7 +88,7 @@ private:
             {
                 if (!wordWrap && ((textOffsetX + glyphWidth) > rec.width))
                 {
-                    textOffsetY += (font.baseSize + font.baseSize / 2) * scaleFactor;
+                    textOffsetY += (font.baseSize + font.baseSize / 2.0f) * scaleFactor;
                     textOffsetX = 0;
                 }
 
@@ -106,7 +112,7 @@ private:
 
                 if (wordWrap && (i == endLine))
                 {
-                    textOffsetY += (font.baseSize + font.baseSize / 2) * scaleFactor;
+                    textOffsetY += (font.baseSize + font.baseSize / 2.0f) * scaleFactor;
                     textOffsetX = 0;
                     startLine = endLine;
                     endLine = -1;
@@ -125,78 +131,18 @@ private:
 public:
 	std::string inputText;
 
-	TextBox()
-	{
-		active = false;
-		inputText = "";
-		text.SetFont(m_font);
-		text.SetFontSize(20);
-		text.SetColor(MGRAY);
-		text.SetText(inputText);
-		text.SetSpacing(1.0f);
-	}
+    TextBox() : active(false) {}
 
-	void Draw(float x, float y, float width, float height)
-	{
-		textBox = raylib::Rectangle(x, y, width, height);
-		textBox.DrawRounded(0.2f, 8, LGRAY);
+	TextBox(float , float , float , float );
 
-		if (!active) {
-			text.SetText(inputText);
-			//text.SetFont(m_font);
-			//text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
-			 //m_font.DrawText(text.GetText(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, text.GetFontSize(), text.GetSpacing(), text.GetColor());
-			//DrawText(inputText.c_str(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, textBox.height - 20, MGRAY);
-		}
-		else {
-			text.SetText(inputText + '_');
-			//m_font.DrawText(text.GetText(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, text.GetFontSize(), text.GetSpacing(), text.GetColor());
-			
-			//text.SetFont(m_font);
-			//text.Draw(static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5);
-			//DrawText((inputText + "_").c_str(), static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 5, textBox.height - 20, MGRAY);
-		}
-	}
+    float getX();
+    float getY();
+    float getWidth();
+    float getHeight();
 
-	void Update()
-	{
-		if ( CheckCollisionPointRec( GetMousePosition(), textBox ) )
-		{
-			if ( IsMouseButtonPressed(MOUSE_LEFT_BUTTON) )
-			{
-				active = true;
-				std::cout << std::endl << "Clicked!" << std::endl;
-			}
-		}
-		else if ( IsMouseButtonPressed(MOUSE_LEFT_BUTTON) )
-		{
-			active = false;
-			std::cout << "Clicked Outside!" << std::endl;
-		}
+	void Draw();
+	void Update();
 
-		if (active)
-		{
-			int charrr = GetCharPressed();
-			int key = GetKeyPressed();
-			while (key > 0) 
-			{
-				if ((key >= 32) && (key <= 125) /*&& (inputText.length() < 20)*/) {
-					inputText += static_cast<char>(charrr);
-					text.SetText(inputText);
-				}
-				else if (IsKeyPressed(KEY_BACKSPACE) && (inputText.length() > 0)) {
-					inputText.pop_back();
-					text.SetText(inputText);
-				}
-				key = GetKeyPressed();
-			}
-		}
-
-	}
-
-    static void DrawTextBoxed(Font font, const char* text, Rectangle rec, float fontSize, float spacing, bool wordWrap, Color tint)
-    {
-        DrawTextBoxedSelectable(font, text, rec, fontSize, spacing, wordWrap, tint, 0, 0, WHITE, WHITE);
-    }
+    void DrawTextBoxed(Font , const char* , Rectangle , float , float , bool , Color );
 
 };
