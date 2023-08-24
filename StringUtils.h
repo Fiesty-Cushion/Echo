@@ -5,9 +5,11 @@
 class StringUtils
 {
 public:
-	static std::string RemoveSpecialCharacters(const std::string& input)
+	static std::string RemoveSpecialCharacters(std::string& input)
 	{
-		std::regex pattern("[^A-Za-z0-9!@#$%^&*(_+)><?|}{\": \t/\\\\]");
+		ReplaceAll(input, "\xE2\x99", "[Music]");
+		ReplaceAll(input, "\xC2\xAA", "");
+		std::regex pattern("[^A-Za-z0-9!><@#%$^&*(_+).,;~`=-?|}{\": \\t/\\\\\\[\\]]");
 		return std::regex_replace(input, pattern, "");
 	}
 	static void ReplaceAll(std::string& s, const std::string& search, const std::string& replace)

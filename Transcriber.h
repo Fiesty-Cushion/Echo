@@ -12,6 +12,7 @@
 
 #include "StringUtils.h"
 #include "ScriptUtils.h"
+#include "VideoUtils.h"
 
 struct transcribed_msg {
 	std::string text;
@@ -25,7 +26,8 @@ public:
 
 	void AddAudioData(const std::vector<float>& new_data);
 	std::vector<transcribed_msg> GetTranscribed();
-	bool GenerateKaraoke(const char* inputPath, const char* outputDir, std::vector<float> pcmf32, std::vector<std::vector<float>> pcmf32s);
+	bool GenerateKaraoke(const char* inputPath, const char* outputDir);
+	bool BurnInSubtitles(const char* inputPath, const char* outputDir);
 
 	~Transcriber();
 
@@ -34,6 +36,7 @@ private:
 
 	struct whisper_context* ctx;
 	struct whisper_context* karaoke_ctx;
+	struct whisper_context* subtitles_ctx;
 
 
 	std::atomic<bool> is_running;

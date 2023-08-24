@@ -39,6 +39,7 @@
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="TextBox.h" />
     <ClInclude Include="Transcriber.h" />
+    <ClInclude Include="VideoUtils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

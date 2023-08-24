@@ -75,6 +75,8 @@ Transcriber::Transcriber(Audio& aud) : audio(aud)
 {
     ctx = whisper_init_from_file(MODEL_PATH.c_str());
     karaoke_ctx = whisper_init_from_file(MODEL_PATH.c_str());
+    subtitles_ctx = whisper_init_from_file(MODEL_PATH.c_str());
+ 
     is_running = true;
     worker = std::thread(&Transcriber::Run, this);
     t_last_iter = std::chrono::high_resolution_clock::now();
@@ -87,6 +89,7 @@ Transcriber::~Transcriber()
         worker.join();
     whisper_free(ctx);
     whisper_free(karaoke_ctx);
+    whisper_free(subtitles_ctx);
 }
 
 /** Add audio data in PCM f32 format. */
@@ -298,8 +301,13 @@ std::string Transcriber::estimate_diarization_speaker(std::vector<std::vector<fl
 }
 
 
-bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir,  std::vector<float> pcmf32, std::vector<std::vector<float>> pcmf32s)
+bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir)
 {
+
+    std::vector<float> pcmf32;
+    std::vector<std::vector<float>> pcmf32s;
+    bool stereo = false;
+    audio.readPCMFromWav(inputPath, pcmf32, pcmf32s, stereo);
 
     float duration = float(pcmf32.size() + 1000) / WHISPER_SAMPLE_RATE;
 
@@ -366,7 +374,7 @@ bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir, 
         {
             const auto& token = tokens[j];
 
-            if (tokens[j].id >= whisper_token_eot(ctx))
+            if (tokens[j].id >= whisper_token_eot(karaoke_ctx))
             {
                 continue;
             }
@@ -391,12 +399,12 @@ bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir, 
                 {
                     const auto& token2 = tokens[k];
 
-                    if (tokens[k].id >= whisper_token_eot(ctx))
+                    if (tokens[k].id >= whisper_token_eot(karaoke_ctx))
                     {
                         continue;
                     }
 
-                    const std::string txt = whisper_token_to_str(ctx, token2.id);
+                    std::string txt = whisper_token_to_str(karaoke_ctx, token2.id);
                     const std::string cleaned_txt = StringUtils::RemoveSpecialCharacters(txt);
                     txt_bg += cleaned_txt;
 
@@ -418,10 +426,10 @@ bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir, 
                         }
                     }
                 }
-
-                StringUtils::ReplaceAll(txt_bg, "'", "\u2019");
+                
+                StringUtils::ReplaceAll(txt_bg, "'", "`");
+                StringUtils::ReplaceAll(txt_fg, "'", "`");
                 StringUtils::ReplaceAll(txt_bg, "\"", "\\\"");
-                StringUtils::ReplaceAll(txt_fg, "'", "\u2019");
                 StringUtils::ReplaceAll(txt_fg, "\"", "\\\"");
 
 
@@ -451,6 +459,148 @@ bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir, 
     if (result && std::remove(outputScript.c_str()) == 0)
     {
         fprintf(stderr, "%s: Karaoke created at : '%s'\n", __func__, outputVideo.c_str());
+    }
+
+    return result;
+}
+
+
+bool Transcriber::BurnInSubtitles(const char* inputPath, const char* outputDir)
+{
+    std::pair<int, int> dimensions =  VideoUtils::GetVideoDimensions(inputPath);
+
+    if (dimensions.first == -1 || dimensions.second == -1)
+    {
+        std::cerr << "Unable to get video dimensions";
+        return false;
+    }
+    int width = dimensions.first;
+    int height = dimensions.second;
+    int y_offset =height*0.1;
+
+    std::cout << "Width: " << width << ", Height: " << height << std::endl;
+
+    std::string fileName = StringUtils::extractFileName(inputPath);
+    std::string wavFile = fileName + ".wav";
+    const std::string outputScript = fileName + "-subs.ps1";
+    const std::string outputVideo = StringUtils::joinPaths(outputDir, fileName) + "-subs.mp4";
+
+    whisper_full_params wh_subtitles_params = whisper_full_default_params(WHISPER_SAMPLING_BEAM_SEARCH);
+    wh_subtitles_params.print_progress = false;
+    wh_subtitles_params.token_timestamps = true;
+    wh_subtitles_params.max_len = 60;
+    wh_subtitles_params.suppress_blank = true;
+    
+    VideoUtils::Generate16KHzWav(inputPath, wavFile);
+    std::vector<float> pcmf32;
+    std::vector<std::vector<float>> pcmf32s;
+    bool stereo = false;
+    audio.readPCMFromWav(wavFile, pcmf32, pcmf32s, stereo);
+    std::remove(wavFile.c_str());
+
+
+    std::ofstream fout(outputScript.c_str());
+
+    fprintf(stderr, "%s:Generating script: '%s'\n", __func__, outputScript.c_str());
+
+    // TODO: decide on where to put the fonts
+    static const char* font = "./Resources/Fonts/VeraMono-Bold.ttf";
+
+    std::ifstream fin(font);
+    if (!fin.is_open())
+    {
+        fprintf(stderr, "%s: font not found at '%s', please specify a monospace font with -fp\n", __func__, font);
+        return false;
+    }
+
+    fout << "ffmpeg -i " << inputPath << " -vf \"";
+
+    if (whisper_full(subtitles_ctx, wh_subtitles_params, pcmf32.data(), pcmf32.size()) != 0)
+    {
+        fprintf(stderr, "%s: failed to process audio\n", "Audio");
+        return false;
+    }
+    for (int i = 0; i < whisper_full_n_segments(subtitles_ctx); i++)
+    {
+        const int64_t t0 = whisper_full_get_segment_t0(subtitles_ctx, i);
+        const int64_t t1 = whisper_full_get_segment_t1(subtitles_ctx, i);
+
+        const int n = whisper_full_n_tokens(subtitles_ctx, i);
+
+        std::vector<whisper_token_data> tokens(n);
+        for (int j = 0; j < n; ++j)
+        {
+            tokens[j] = whisper_full_get_token_data(subtitles_ctx, i, j);
+        }
+
+        if (i > 0)
+        {
+            fout << ",";
+        }
+
+        fout << "drawtext=fontfile='" << font << "':fontsize=26:fontcolor=#FFFFCC:x=(w-text_w)/2:y=" << height - y_offset << ":text = '' : enable = 'between(t," << t0 / 100.0 << "," << t0 / 100.0 << ")'";
+
+        bool is_first = true;
+        std::string speaker = "";
+
+        if (pcmf32s.size() == 2)
+        {
+            speaker = estimate_diarization_speaker(pcmf32s, t0, t1);
+        }
+
+        for (int j = 0; j < n; ++j)
+        {
+            const auto& token = tokens[j];
+
+            if (tokens[j].id >= whisper_token_eot(subtitles_ctx))
+            {
+                continue;
+            }
+
+            std::string subs_text = "";
+
+            if (pcmf32s.size() == 2)
+            {
+                subs_text = speaker;
+            }
+
+            {
+                for (int k = 0; k < n; ++k)
+                {
+                    const auto& token2 = tokens[k];
+
+                    if (tokens[k].id >= whisper_token_eot(subtitles_ctx))
+                    {
+                        continue;
+                    }
+
+                    std::string txt = whisper_token_to_str(subtitles_ctx, token2.id);
+                    const std::string cleaned_txt = StringUtils::RemoveSpecialCharacters(txt);
+                    subs_text += cleaned_txt;
+                }
+
+                StringUtils::ReplaceAll(subs_text, "'", "`");
+                StringUtils::ReplaceAll(subs_text, "\"", "\\\"");
+            }
+
+            if (is_first)
+            {
+                // background text
+                fout << ",drawtext=fontfile='" << font << "':fontsize=26:fontcolor=#FFFFCC:x=(w-text_w)/2:y=" << height - y_offset << ":text='" << subs_text << "':enable='between(t," << t0 / 100.0 << "," << t1 / 100.0 << ")'";
+                is_first = false;
+            }
+        }
+    }
+
+    fout << "\" -c:v libx264 -pix_fmt yuv420p -y " << outputVideo.c_str() << "\n";
+    fout.close();
+
+    bool result = ScriptUtils::RunScriptFromCurrentDir(outputScript);
+
+    // removing the script if video creation is successful
+    if (result && std::remove(outputScript.c_str()) == 0)
+    {
+        fprintf(stderr, "%s: Video with subtitles created at : '%s'\n", __func__, outputVideo.c_str());
     }
 
     return result;

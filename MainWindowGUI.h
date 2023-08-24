@@ -13,7 +13,6 @@
 #include "Button.h"
 #include "Audio.h"
 
-
 class MainWindowGUI : public GUI
 {
 private:

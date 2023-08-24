@@ -131,18 +131,21 @@ void MainWindowGUI::HandleEvents()
 
 
 	// TEST ONLY
-	if (karaokeButton.isPressed()) {
-		std::vector<float> pcm32fWav;
-		std::vector<std::vector<float>> pcmf32sWav;
-		bool stereo = false;
+	/*if (karaokeButton.isPressed()) {
 
 		std::string inputPath = "./Samples/chacha.wav";
 		std::string outputDir = "./Samples";
 
-		audio->readPCMFromWav(inputPath, pcm32fWav, pcmf32sWav, stereo);
-		transcriber->GenerateKaraoke(inputPath.c_str(), outputDir.c_str(), pcm32fWav, pcmf32sWav);
+		transcriber->GenerateKaraoke(inputPath.c_str(), outputDir.c_str());
+	}*/
 
+	if (karaokeButton.isPressed())
+	{
+		std::string videoPath = "./Samples/dsblong.mp4";
+		std::string outputDir = "./Samples";
 
+		transcriber->BurnInSubtitles(videoPath.c_str(), outputDir.c_str());
+		
 	}
 
 	// FOR TRANSCRIPTION FROM WAV FILE //

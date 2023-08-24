@@ -46,4 +46,9 @@ public:
 
         return true;
     }
+
+    static void RemoveFile(const char* filename)
+    {
+        std::remove(filename);
+    }
 };
