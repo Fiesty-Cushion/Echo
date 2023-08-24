@@ -4,6 +4,7 @@
 #include <raylib-cpp/Rectangle.hpp>
 #include <raylib-cpp/Text.hpp>
 #include <raylib-cpp/Font.hpp>
+#include <raylib-cpp/Image.hpp>
 
 #include "Globals.h"
 #include "GUI.h"
@@ -16,6 +17,8 @@
 #include "STTWindowGUI.h"
 #include "SubtitleWindowGUI.h"
 #include "KaraokeWindowGUI.h"
+#include <nfd.h>
+#include <raylib-cpp/Texture.hpp>
 
 
 class MainWindowGUI : public GUI
@@ -24,6 +27,9 @@ private:
 	Screen screen;
 	TextWave wave;
 
+	raylib::Image importIconPNG;
+	Texture2D importIconTexture;
+
 	raylib::Text titleText;
 	raylib::Text modelSelectText;
 	raylib::Text featuresText;
@@ -31,6 +37,10 @@ private:
 	DropdownList dropdownList;
 
 	TextBox modelTextBox;
+	Button modelTextBoxButton;
+
+	nfdchar_t* outPath = NULL;
+	nfdresult_t result;
 
 	STTWindowGUI sttScreen;
 	SubtitleWindowGUI subtitleScreen;

@@ -4,6 +4,8 @@
 #include "DropdownList.h"
 
 #include <math.h>
+#include <nfd.h>
+#include <raylib-cpp/Text.hpp>
 
 
 void MainWindowGUI::Init()
@@ -29,6 +31,13 @@ void MainWindowGUI::Init()
 	dropdownList = DropdownList(930, 165, 200, 50);
 
 	modelTextBox = TextBox(72, 170, 506.5, 45);
+	modelTextBoxButton = Button("", { 45, 45 }, MBG, MTEXT, m_font);
+	modelTextBoxButton.setPosition({ 620, 192 });
+
+	importIconPNG = raylib::Image("./Resources/import.png");
+	importIconPNG.Resize(modelTextBoxButton.getSize().x - 10, modelTextBoxButton.getSize().y - 10);
+	importIconTexture = LoadTextureFromImage(importIconPNG);
+	importIconPNG.Unload();
 
 	wave.numCharacters = titleText.GetText().length();
 	wave.characterOffset = new float[wave.numCharacters];
@@ -61,6 +70,9 @@ void MainWindowGUI::Draw()
 
 		modelSelectText.Draw({ 72, 114 });
 		modelTextBox.Draw();
+		modelTextBox.DrawTextBoxed(m_font, modelTextBox.inputText.c_str(), Rectangle{modelTextBox.getX() + 10, modelTextBox.getY() + 10 , modelTextBox.getWidth() - 20, modelTextBox.getHeight() - 20}, 20, 1, false, MTEXT);
+		modelTextBoxButton.Draw("");
+		DrawTexture(importIconTexture, modelTextBoxButton.getPosition().x + 5, modelTextBoxButton.getPosition().y + 5, MPINK);
 		
 		featuresText.Draw({ 977, 110 });
 		dropdownList.Draw();
@@ -93,6 +105,24 @@ void MainWindowGUI::HandleEvents()
 {
 	modelTextBox.Update();
 	dropdownList.Update();
+
+	if (modelTextBoxButton.isPressed())
+	{
+		result = NFD_OpenDialog("bin", NULL, &outPath);
+
+		if (result == NFD_OKAY)
+		{
+			modelTextBox.inputText = outPath;
+		}
+		else if (result == NFD_CANCEL)
+		{
+			return;
+		}
+		else
+		{
+			printf("Error: %s\n", NFD_GetError());
+		}
+	}
 
 	if (screen == RealTime_Screen)
 	{

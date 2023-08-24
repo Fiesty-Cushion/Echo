@@ -1,10 +1,8 @@
 #pragma once
-
 #include <string>
-#include <raylib.h>
 #include <raylib-cpp/Rectangle.hpp>
 #include <raylib-cpp/Text.hpp>
-
+#include "Globals.h"
 
 class Button {
 private:
@@ -47,7 +45,16 @@ public:
 
 		textX = (pos.x + button.GetWidth() / 2) - (textPos.x / 2);
 		textY = (pos.y + button.GetHeight() / 2) - (textPos.y / 2);
+	}
 
+	Vector2 getPosition()
+	{
+		return button.GetPosition();
+	}
+
+	Vector2 getSize()
+	{
+		return button.GetSize();
 	}
 
 	void Draw(std::string buttonText) {
@@ -55,6 +62,11 @@ public:
 		button.Draw(_color);
 		btnText.SetText(buttonText);
 		btnText.Draw(textX, textY);
+	}
+
+	void DrawIcon(int iconId)
+	{
+		//GuiDrawIcon(iconId, button.GetX(), button.GetX(), 24, MTEXT);
 	}
 
 	bool isMouseOver()
