@@ -18,13 +18,14 @@
 
 void high_pass_filter(std::vector<float>& data, float cutoff, float sample_rate)
 {
-   
-    const float rc = 1.0f / (2.0f * M_PI * cutoff);
-    const float dt = 1.0f / sample_rate;
-    const float alpha = dt / (rc + dt);
+    const float rc = 1.0f / (2.0f * M_PI * cutoff);   // Calculate the time constant of the filter
+    const float dt = 1.0f / sample_rate;              // Calculate the time interval between consecutive samples
+    const float alpha = dt / (rc + dt);               // Calculate the smoothing factor for the filter
 
     float y = data[0];
 
+    // Calculate the new filtered value using the high-pass filter formula
+    // y[n] = alpha * (y[n-1] + x[n] - x[n-1])
     for (size_t i = 1; i < data.size(); i++) {
         y = alpha * (y + data[i] - data[i - 1]);
         data[i] = y;
@@ -35,23 +36,28 @@ void high_pass_filter(std::vector<float>& data, float cutoff, float sample_rate)
 bool vad_simple(std::vector<float>& pcmf32, int sample_rate, int last_ms, float vad_thold, float freq_thold, bool verbose)
 {
     const int n_samples = pcmf32.size();
-    const int n_samples_last = (sample_rate * last_ms) / 1000;
+
+    const int n_samples_last = (sample_rate * last_ms) / 1000;  // Calculate the number of samples in the last 'last_ms' milliseconds
 
     if (n_samples_last >= n_samples) {
         // not enough samples - assume no speech
         return false;
     }
 
-    if (freq_thold > 0.0f) {
+    // Apply high-pass filter to the audio signal if 'freq_thold' is greater than 0
+
+    if (freq_thold > 0.0f) {                          
         high_pass_filter(pcmf32, freq_thold, sample_rate);
     }
 
-    float energy_all = 0.0f;
-    float energy_last = 0.0f;
+
+    float energy_all = 0.0f;          // Total energy over all samples
+    float energy_last = 0.0f;         // Total energy over the last 'last_ms' milliseconds
 
     for (int i = 0; i < n_samples; i++) {
-        energy_all += fabsf(pcmf32[i]);
+        energy_all += fabsf(pcmf32[i]);    // Accumulate the absolute values of the samples to calculate energy
 
+        // If the sample is within the range of the last 'last_ms' milliseconds
         if (i >= n_samples - n_samples_last) {
             energy_last += fabsf(pcmf32[i]);
         }
@@ -64,6 +70,7 @@ bool vad_simple(std::vector<float>& pcmf32, int sample_rate, int last_ms, float 
         fprintf(stderr, "%s: energy_all: %f, energy_last: %f, vad_thold: %f, freq_thold: %f\n", __func__, energy_all, energy_last, vad_thold, freq_thold);
     }
 
+    // Perform VAD decision based on energy analysis and threshold comparisons
     if ((energy_all < 0.0001f && energy_last < 0.0001f) || energy_last > vad_thold * energy_all) {
         return false;
     }
@@ -100,7 +107,7 @@ void Transcriber::AddAudioData(const std::vector<float>& data)
     s_queued_pcmf32.insert(s_queued_pcmf32.end(), data.begin(), data.end());
 }
 
-/** Get newly transcribed text. */
+/* Get newly transcribed text. */
 std::vector<transcribed_msg> Transcriber::GetTranscribed()
 {
     std::vector<transcribed_msg> transcribed;
@@ -126,23 +133,19 @@ void Transcriber::Run()
     wparams.language = "en";
     wparams.translate = false;
 
-    /**
-     * Experimental optimization: Reduce audio_ctx to 15s (half of the chunk
-     * size whisper is designed for) to speed up 2x.
-     * https://github.com/ggerganov/whisper.cpp/issues/137#issuecomment-1318412267
-     */
-    wparams.audio_ctx = 768;
+    wparams.audio_ctx = 768;    // experimental optimization
 
     /* When more than this amount of audio received, run an iteration. */
     const int trigger_ms = 400;
     const int n_samples_trigger = (trigger_ms / 1000.0) * WHISPER_SAMPLE_RATE;
+
     /**
      * When more than this amount of audio accumulates in the audio buffer,
-     * force finalize current audio context and clear the buffer. Note that
-     * VAD may finalize an iteration earlier.
+     * force finalize current audio context and clear the buffer.
      */
+
      // This is recommended to be smaller than the time wparams.audio_ctx
-     // represents so an iteration can fit in one chunk.
+     // represents so an iteration can fit in one chunk. Currently 14 sec.
     const int iter_threshold_ms = trigger_ms * 35;
     const int n_samples_iter_threshold = (iter_threshold_ms / 1000.0) * WHISPER_SAMPLE_RATE;
 
@@ -210,10 +213,7 @@ void Transcriber::Run()
                 msg.text += text;
             }
 
-            /**
-             * Simple VAD from the "stream" example in whisper.cpp
-             * https://github.com/ggerganov/whisper.cpp/blob/231bebca7deaf32d268a8b207d15aa859e52dbbe/examples/stream/stream.cpp#L378
-             */
+            // VAD Parameter
             bool speech_has_end = false;
 
             /* Need enough accumulated audio to do VAD. */
