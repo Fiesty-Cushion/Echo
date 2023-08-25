@@ -72,7 +72,7 @@ void SubtitleWindowGUI::Draw()
 	default:
 		break;
 	}
-	promptText.Draw({ 190, 620 });
+	promptText.Draw({ subtitleImportButton.getPosition().x + subtitleImportButton.getSize().x / 2 - MeasureTextEx(m_font, promptText.GetText().c_str(),promptText.GetFontSize(), promptText.GetSpacing()).x / 2, 620 });
 
 	GuiDrawIcon(2, outDirBoxButton.getPosition().x + 5, outDirBoxButton.getPosition().y + 5, 2, MTEXT);
 

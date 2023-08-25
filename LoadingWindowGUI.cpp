@@ -18,7 +18,8 @@
 //
 //	plm = plm_create_with_filename("./Resources/Intro.mpeg");
 //
-//	if (!plm) {
+//	if (!plm)
+//	{
 //		std::cerr << "Loading Window Path Not Found !!!" << std::endl;
 //		std::exit(-1);
 //	}
@@ -43,7 +44,7 @@
 //	int framesCounter = 0;
 //
 //	baseTime = GetTime();    // Time since InitWindow()
-//	std::cout<<std::endl<<"init end"<<std::endl;
+//	std::cout << std::endl << "init end" << std::endl;
 //
 //}
 //
@@ -63,13 +64,13 @@
 //	ClearBackground(BLANK);
 //
 //	DrawTexture(vid_texture, GetScreenWidth() / 2 - vid_texture.width / 2, GetScreenHeight() / 2 - vid_texture.height / 2, WHITE);
-//	
+//
 //	EndDrawing();
 //}
 //
 //void LoadingWindowGUI::HandleEvents()
 //{
-//	
+//
 //	// Video should run at 'framerate' fps => One new frame every 1/framerate
 //	double time = (GetTime() - baseTime);
 //
@@ -86,12 +87,13 @@
 //			// Update texture
 //			UpdateTexture(vid_texture, static_cast<uint8_t*>(imFrame.data));
 //		}
-//		else {
+//		else
+//		{
 //			pause = true;
 //		}
 //
 //	}
-//	
+//
 //
 //}
 //

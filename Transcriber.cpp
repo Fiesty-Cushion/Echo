@@ -303,7 +303,7 @@ std::string Transcriber::estimate_diarization_speaker(std::vector<std::vector<fl
 
 bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir)
 {
-
+    // converting wav to pcm
     std::vector<float> pcmf32;
     std::vector<std::vector<float>> pcmf32s;
     bool stereo = false;
@@ -322,9 +322,9 @@ bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir)
     wh_karaoke_params.suppress_blank = true;
     std::ofstream fout(outputScript.c_str());
 
+    // script to generate karaoke video
     fprintf(stderr, "%s:Generating script: '%s'\n", __func__, outputScript.c_str());
 
-    // TODO: decide on where to put the fonts
     static const char* font = "./Resources/Fonts/VeraMono-Bold.ttf";
 
     std::ifstream fin(font);
@@ -333,7 +333,9 @@ bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir)
         fprintf(stderr, "%s: font not found at '%s', please specify a monospace font with -fp\n", __func__, font);
         return false;
     }
-
+    // -f specifies format size, color, duration and framerate
+    // lavfi or libavfilter input allows to generate synthetic audio/video stream
+    // -vf or video filter specifies drawtext filters to draw text overlays on the video
     fout << "ffmpeg -i " << inputPath << " -f lavfi -i color=size=1200x120:duration=" << duration << ":rate=25:color=black -vf \"";
 
     if (whisper_full(karaoke_ctx, wh_karaoke_params, pcmf32.data(), pcmf32.size()) != 0)
@@ -405,7 +407,7 @@ bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir)
                     }
 
                     std::string txt = whisper_token_to_str(karaoke_ctx, token2.id);
-                    const std::string cleaned_txt = StringUtils::RemoveSpecialCharacters(txt);
+                    const std::string cleaned_txt = StringUtils::RemoveSpecialCharacters(txt); // removing characters that are not supported
                     txt_bg += cleaned_txt;
 
                     if (k == j)
@@ -449,7 +451,8 @@ bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir)
             fout << ",drawtext=fontfile='" << font << "':fontsize=24:fontcolor=lightgreen:x=(w-text_w)/2+8:y=h/2+16:text='" << txt_ul << "':enable='between(t," << token.t0 / 100.0 << "," << token.t1 / 100.0 << ")'";
         }
     }
-
+    //- c:v libx264 sets H.264 video codec for compression
+    //  - pix_fmt yuv420p sets pixel format to yuv420p(y=luminicance, uv=chrominance where u is blue-difference v is red-difference)   
     fout << "\" -c:v libx264 -pix_fmt yuv420p -y " << outputVideo.c_str() << "\n";
     fout.close();
 
@@ -491,6 +494,7 @@ bool Transcriber::BurnInSubtitles(const char* inputPath, const char* outputDir)
     wh_subtitles_params.max_len = 60;
     wh_subtitles_params.suppress_blank = true;
     
+    // converting audio intially to a 16khz wav and then to PCM data
     VideoUtils::Generate16KHzWav(inputPath, wavFile);
     std::vector<float> pcmf32;
     std::vector<std::vector<float>> pcmf32s;
@@ -501,9 +505,9 @@ bool Transcriber::BurnInSubtitles(const char* inputPath, const char* outputDir)
 
     std::ofstream fout(outputScript.c_str());
 
+    // script to generate burned in subtitles
     fprintf(stderr, "%s:Generating script: '%s'\n", __func__, outputScript.c_str());
 
-    // TODO: decide on where to put the fonts
     static const char* font = "./Resources/Fonts/VeraMono-Bold.ttf";
 
     std::ifstream fin(font);
@@ -512,7 +516,8 @@ bool Transcriber::BurnInSubtitles(const char* inputPath, const char* outputDir)
         fprintf(stderr, "%s: font not found at '%s', please specify a monospace font with -fp\n", __func__, font);
         return false;
     }
-
+    // -i input file
+    // -vf video filter
     fout << "ffmpeg -i " << inputPath << " -vf \"";
 
     if (whisper_full(subtitles_ctx, wh_subtitles_params, pcmf32.data(), pcmf32.size()) != 0)
@@ -537,7 +542,6 @@ bool Transcriber::BurnInSubtitles(const char* inputPath, const char* outputDir)
         {
             fout << ",";
         }
-
         fout << "drawtext=fontfile='" << font << "':fontsize=26:fontcolor=#FFFFCC:x=(w-text_w)/2:y=" << height - y_offset << ":text = '' : enable = 'between(t," << t0 / 100.0 << "," << t0 / 100.0 << ")'";
 
         bool is_first = true;
@@ -575,23 +579,24 @@ bool Transcriber::BurnInSubtitles(const char* inputPath, const char* outputDir)
                     }
 
                     std::string txt = whisper_token_to_str(subtitles_ctx, token2.id);
-                    const std::string cleaned_txt = StringUtils::RemoveSpecialCharacters(txt);
+                    const std::string cleaned_txt = StringUtils::RemoveSpecialCharacters(txt); // removing characters that are not supported
                     subs_text += cleaned_txt;
                 }
-
+                
                 StringUtils::ReplaceAll(subs_text, "'", "`");
                 StringUtils::ReplaceAll(subs_text, "\"", "\\\"");
             }
 
             if (is_first)
             {
-                // background text
+                // applying draw filters in subtitles text
                 fout << ",drawtext=fontfile='" << font << "':fontsize=26:fontcolor=#FFFFCC:x=(w-text_w)/2:y=" << height - y_offset << ":text='" << subs_text << "':enable='between(t," << t0 / 100.0 << "," << t1 / 100.0 << ")'";
                 is_first = false;
             }
         }
     }
-
+    //- c:v libx264 sets H.264 video codec for compression
+    //  - pix_fmt yuv420p sets pixel format to yuv420p(y=luminicance, uv=chrominance where u is blue-difference v is red-difference)   
     fout << "\" -c:v libx264 -pix_fmt yuv420p -y " << outputVideo.c_str() << "\n";
     fout.close();
 
