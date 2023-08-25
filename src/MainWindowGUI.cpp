@@ -6,6 +6,7 @@
 #include <math.h>
 #include <nfd.h>
 #include <raylib-cpp/Text.hpp>
+#include <cstdlib>
 
 
 void MainWindowGUI::Init()
@@ -19,6 +20,7 @@ void MainWindowGUI::Init()
 	screen = RealTime_Screen;
 
 	m_font = raylib::Font(m_font_path);
+	std::system("pwd");
 	GenTextureMipmaps(&m_font.texture);
 	SetTextureFilter(m_font.texture, TEXTURE_FILTER_ANISOTROPIC_8X);
 

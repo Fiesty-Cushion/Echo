@@ -27,11 +27,6 @@ void KaraokeWindowGUI::Init()
 	nfdchar_t* outPath = NULL;
 	nfdresult_t result;
 
-	karExportIcon = raylib::Image("./Resources/save.png");
-	karExportIcon.Resize(outDirBoxButton.getSize().x - 10, outDirBoxButton.getSize().y - 10);
-	karExportIconTexture = LoadTextureFromImage(karExportIcon);
-	karExportIcon.Unload();
-
 	setupDisplayText(karExportText, "Save File To");
 
 	audio = new Audio();

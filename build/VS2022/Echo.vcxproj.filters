@@ -15,85 +15,82 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Transcriber.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Audio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Globals.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MainWindowGUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LoadingWindowGUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="STTWindowGUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SubtitleWindowGUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="KaraokeWindowGUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Button.h">
+    <ClInclude Include="..\..\src\LoadingWindowGUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Transcriber.h">
+    <ClInclude Include="..\..\src\MainWindowGUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Audio.h">
+    <ClInclude Include="..\..\src\Modes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Modes.h">
+    <ClInclude Include="..\..\src\ScriptUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Globals.h">
+    <ClInclude Include="..\..\src\StringUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI.h">
+    <ClInclude Include="..\..\src\STTWindowGUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LoadingWindowGUI.h">
+    <ClInclude Include="..\..\src\SubtitleWindowGUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MainWindowGUI.h">
+    <ClInclude Include="..\..\src\TextBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TextBox.h">
+    <ClInclude Include="..\..\src\Transcriber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DropdownList.h">
+    <ClInclude Include="..\..\src\VideoUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="STTWindowGUI.h">
+    <ClInclude Include="..\..\src\Audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SubtitleWindowGUI.h">
+    <ClInclude Include="..\..\src\Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="KaraokeWindowGUI.h">
+    <ClInclude Include="..\..\src\DropdownList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptUtils.h">
+    <ClInclude Include="..\..\src\Globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StringUtils.h">
+    <ClInclude Include="..\..\src\GUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VideoUtils.h">
+    <ClInclude Include="..\..\src\KaraokeWindowGUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="README.md" />
+    <ClCompile Include="..\..\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\MainWindowGUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\STTWindowGUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\SubtitleWindowGUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Transcriber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Audio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Globals.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\KaraokeWindowGUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LoadingWindowGUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
