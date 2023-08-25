@@ -37,7 +37,8 @@ void MainWindowGUI::Init()
 	wave.numCharacters = titleText.GetText().length();
 	wave.characterOffset = new float[wave.numCharacters];
 
-	for (int i = 0; i < wave.numCharacters; i++) {
+	for (int i = 0; i < wave.numCharacters; i++)
+	{
 		wave.characterOffset[i] = 0.0f;
 	}
 
@@ -74,8 +75,8 @@ void MainWindowGUI::Draw()
 
 		modelSelectText.Draw({ 72, 114 });
 		modelTextBox.Draw();
-		modelTextBox.DrawTextBoxed(m_font, modelTextBox.inputText.c_str(), Rectangle{modelTextBox.getX() + 10, modelTextBox.getY() + 10 , modelTextBox.getWidth() - 20, modelTextBox.getHeight() - 20}, 20, 1, false, MTEXT);
-		
+		modelTextBox.DrawTextBoxed(m_font, modelTextBox.inputText.c_str(), Rectangle{ modelTextBox.getX() + 10, modelTextBox.getY() + 10 , modelTextBox.getWidth() - 20, modelTextBox.getHeight() - 20 }, 20, 1, false, MTEXT);
+
 		modelTextBoxButton.Draw("");
 		GuiDrawIcon(1, modelTextBoxButton.getPosition().x + 6, modelTextBoxButton.getPosition().y + 5, 2, MTEXT);
 
@@ -87,7 +88,7 @@ void MainWindowGUI::Draw()
 		if (screen == RealTime_Screen)
 		{
 			sttScreen.Draw();
-		} 
+		}
 		else if (screen == Subtitle_Screen)
 		{
 			subtitleScreen.Draw();
@@ -100,7 +101,8 @@ void MainWindowGUI::Draw()
 	}
 	EndDrawing();
 
-	for (int i = 0; i < wave.numCharacters; i++) {
+	for (int i = 0; i < wave.numCharacters; i++)
+	{
 		wave.characterOffset[i] = sinf(GetTime() * 3.0f + i * 3.0f) * 5.0f; // Adjust amplitude and speed
 	}
 }
@@ -117,6 +119,7 @@ void MainWindowGUI::HandleEvents()
 		if (result == NFD_OKAY)
 		{
 			modelTextBox.inputText = outPath;
+			/*	MODEL_PATH = *outPath;*/
 		}
 		else if (result == NFD_CANCEL)
 		{
@@ -138,7 +141,7 @@ void MainWindowGUI::HandleEvents()
 	}
 	else if (screen == Karaoke_Screen)
 	{
-		karaokeScreen.HandleEvents();		
+		karaokeScreen.HandleEvents();
 	}
 
 

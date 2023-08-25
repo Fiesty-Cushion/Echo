@@ -7,6 +7,7 @@
 #include <raylib-cpp/Font.hpp>
 #include <raylib-cpp/Text.hpp>
 #include <portaudio.h>
+#include "Transcriber.h"
 
 
 #define MGRAY CLITERAL(Color) {225, 225, 225, 255}
@@ -16,6 +17,10 @@
 #define MBORDER CLITERAL(Color) {194, 195, 199, 255}
 #define LGRAY CLITERAL(Color) {73, 76, 93, 255}
 #define LIGHTBLUE CLITERAL(Color) {229, 241, 251, 255}
+#define PALEGREEN CLITERAL(Color) {152, 251, 152, 255}
+#define DARKTURQOUISE CLITERAL(Color) {0, 206, 209, 255}
+#define CORAL CLITERAL(Color) {255, 127, 80, 255}
+
 
 const double PA_SAMPLE_RATE = 16000;
 const unsigned int PA_FRAMES_PER_BUFFER = 512;
@@ -28,6 +33,8 @@ extern std::queue<std::vector<float>> pcm32_bufferQueue;
 extern std::vector<float> pcm32_input;
 extern std::condition_variable bufferCV;
 extern std::mutex bufferMutex;
+//extern Audio* audio;
+//extern Transcriber* transcriber;
 
 extern std::string transcribedText;
 
@@ -54,3 +61,11 @@ struct TextWave
 };
 
 void addHoverEffect(raylib::Text, TextWave* wave, int x, int y);
+
+enum class FileStatus
+{
+	Default,
+	FileReceived,
+	ProcessComplete,
+	ProcessFailed
+};
