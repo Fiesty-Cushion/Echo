@@ -7,6 +7,7 @@
 #include <raylib-cpp/Font.hpp>
 #include <raylib-cpp/Text.hpp>
 #include <portaudio.h>
+#include "Transcriber.h"
 
 
 #define MGRAY CLITERAL(Color) {225, 225, 225, 255}
@@ -28,6 +29,8 @@ extern std::queue<std::vector<float>> pcm32_bufferQueue;
 extern std::vector<float> pcm32_input;
 extern std::condition_variable bufferCV;
 extern std::mutex bufferMutex;
+//extern Audio* audio;
+//extern Transcriber* transcriber;
 
 extern std::string transcribedText;
 

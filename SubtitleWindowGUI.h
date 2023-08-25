@@ -12,6 +12,7 @@
 #include "TextBox.h"
 
 
+
 class SubtitleWindowGUI : public GUI
 {
 private:
@@ -21,7 +22,7 @@ private:
 
 	Button subtitleButton;
 	Button subtitleImportButton;
-	
+
 	TextBox outDirBox;
 	Button outDirBoxButton;
 
@@ -29,11 +30,15 @@ private:
 	nfdresult_t result;
 
 	std::string subtitleInputPath;
+	std::string outputDirPath;
 
 	Texture frame;
 	Image frameImage;
 
 	bool displayVideoFrame = false;
+
+	Audio* audio;
+	Transcriber* transcriber;
 
 	void setupDisplayText(raylib::Text& text, std::string message, int fontSize = 32, raylib::Font& font = m_font)
 	{

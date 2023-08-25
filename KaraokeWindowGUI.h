@@ -18,8 +18,10 @@ class KaraokeWindowGUI : public GUI
 private:
 	raylib::Text karaokeText;
 	raylib::Text karExportText;
+	raylib::Text promptText;
 
 	Button karaokeButton;
+	Button karaokeImportButton;
 
 	TextBox outDirBox;
 	Button outDirBoxButton;
@@ -29,6 +31,14 @@ private:
 
 	raylib::Image karExportIcon;
 	Texture2D karExportIconTexture;
+
+	std::string karaokeInputPath;
+	std::string outputDirPath;
+
+	Texture frame;
+	Image frameImage;
+
+	bool displayVideoFrame = false;
 
 	Audio* audio;
 	Transcriber* transcriber;
