@@ -38,7 +38,8 @@ private:
 	Texture frame;
 	Image frameImage;
 
-	bool displayVideoFrame = false;
+	//bool displayVideoFrame = false;
+	FileStatus fileStatus = FileStatus::Default;
 
 	Audio* audio;
 	Transcriber* transcriber;

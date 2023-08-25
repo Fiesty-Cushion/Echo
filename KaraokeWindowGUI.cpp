@@ -50,20 +50,34 @@ void KaraokeWindowGUI::Draw()
 
 	karExportText.Draw({ 750, 400 });
 	outDirBoxButton.Draw("");
-	//DrawTexture(karExportIconTexture, outDirBoxButton.getPosition().x + 5, outDirBoxButton.getPosition().y + 5, MPINK);
-	if (!displayVideoFrame)
+	karaokeImportButton.Draw("");
+
+	switch (fileStatus)
 	{
-		karaokeImportButton.Draw("");
+	case FileStatus::Default:
+		setupDisplayText(promptText, "Import a File to Get Started", 20);
+		promptText.SetColor(GRAY);
 		GuiDrawIcon(5, karaokeImportButton.getPosition().x + 170, karaokeImportButton.getPosition().y + 50, 10, GRAY);
-		promptText.Draw({ 190, 620 });
+		break;
+	case FileStatus::FileReceived:
+		setupDisplayText(promptText, karaokeInputPath, 20);
+		promptText.SetColor(DARKTURQOUISE);
+		GuiDrawIcon(5, karaokeImportButton.getPosition().x + 170, karaokeImportButton.getPosition().y + 50, 10, DARKTURQOUISE);
+		break;
+	case FileStatus::ProcessComplete:
+		setupDisplayText(promptText, "Karaoke Generation Complete!", 20);
+		promptText.SetColor(PALEGREEN);
+		GuiDrawIcon(5, karaokeImportButton.getPosition().x + 170, karaokeImportButton.getPosition().y + 50, 10, PALEGREEN);
+		break;
+	case FileStatus::ProcessFailed:
+		setupDisplayText(promptText, "Oops something went wrong! :(", 20);
+		promptText.SetColor(CORAL);
+		GuiDrawIcon(5, karaokeImportButton.getPosition().x + 170, karaokeImportButton.getPosition().y + 50, 10, CORAL);
+		break;
+	default:
+		break;
 	}
-	else
-	{
-		frameImage = LoadImageFromTexture(frame);
-		ImageResize(&frameImage, karaokeImportButton.getSize().x, karaokeImportButton.getSize().y);
-		frame = LoadTextureFromImage(frameImage);
-		DrawTexture(frame, karaokeImportButton.getPosition().x, karaokeImportButton.getPosition().y, WHITE);
-	}
+	promptText.Draw({ 190, 620 });
 
 	GuiDrawIcon(2, outDirBoxButton.getPosition().x + 5, outDirBoxButton.getPosition().y + 5, 2, MTEXT);
 }
@@ -100,11 +114,7 @@ void KaraokeWindowGUI::HandleEvents()
 		{
 			std::cout << outPath << std::endl;
 			karaokeInputPath = outPath;
-			/*std::string mpegFile = StringUtils::extractFileName(karaokeInputPath) + ".mpeg";
-			VideoUtils::ConvertToMpeg(karaokeInputPath, mpegFile);
-			frame = VideoUtils::GetFrameFromVideo(mpegFile);*/
-			displayVideoFrame = false;
-			//std::cout << "Input File: " << outPath << std::endl;
+			fileStatus = FileStatus::FileReceived;
 		}
 		else if (result == NFD_CANCEL)
 		{
@@ -131,9 +141,10 @@ void KaraokeWindowGUI::HandleEvents()
 		}
 		else
 		{
-			std::cout << "Starting Subtitle Generation" << std::endl;
+			std::cout << "Starting Karaoke Generation" << std::endl;
 
-			transcriber->BurnInSubtitles(karaokeInputPath.c_str(), outputDirPath.c_str());
+			bool result = transcriber->GenerateKaraoke(karaokeInputPath.c_str(), outputDirPath.c_str());
+			fileStatus = result ? FileStatus::ProcessComplete : FileStatus::ProcessFailed;
 		}
 	}
 
