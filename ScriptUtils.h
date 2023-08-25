@@ -30,10 +30,7 @@ public:
         std::string s = buffer;
         StringUtils::ReplaceAll(s, "\\", "/");
 
-        //std::string fullpath = s + "/" + script;
-        //// AGGHHHHHHHHHHHHHHHHHHHHHH THIS IS NOT WORKING
-        //std::string command = "cmd /c \"" + fullpath + "\"";
-
+     // using powershell to execute the script from current location
         std::string command = "powershell.exe -ExecutionPolicy Bypass -Command \"cd '" + s + "'; .\\" + script + "\"";
 
         int result = std::system(command.c_str());

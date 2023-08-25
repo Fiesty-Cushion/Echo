@@ -7,6 +7,7 @@ class StringUtils
 public:
 	static std::string RemoveSpecialCharacters(std::string& input)
 	{
+		// replacing the music character with [Music]
 		ReplaceAll(input, "\xE2\x99", "[Music]");
 		ReplaceAll(input, "\xC2\xAA", "");
 		std::regex pattern("[^A-Za-z0-9!><@#%$^&*(_+).,;~`=-?|}{\": \\t/\\\\\\[\\]]");
