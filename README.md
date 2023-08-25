@@ -1,4 +1,6 @@
-# Installation
+# Uploading Readme...
+
+## Installation
 1. Clone the project
 2. cd ./Echo/
 3. Run `setup.ps1`. If it gives error follow the instructions in the error message.
