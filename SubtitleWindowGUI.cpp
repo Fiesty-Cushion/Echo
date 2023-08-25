@@ -45,19 +45,34 @@ void SubtitleWindowGUI::Draw()
 	srtExportText.Draw({ 750, 400 });
 	outDirBoxButton.Draw("");
 
-	if (!displayVideoFrame)
+	subtitleImportButton.Draw("");
+
+	switch (fileStatus)
 	{
-		subtitleImportButton.Draw("");
+	case FileStatus::Default:
+		setupDisplayText(promptText, "Import a File to Get Started", 20);
+		promptText.SetColor(GRAY);
 		GuiDrawIcon(5, subtitleImportButton.getPosition().x + 170, subtitleImportButton.getPosition().y + 50, 10, GRAY);
-		promptText.Draw({ 190, 620 });
+		break;
+	case FileStatus::FileReceived:
+		setupDisplayText(promptText, subtitleInputPath, 20);
+		promptText.SetColor(DARKTURQOUISE);
+		GuiDrawIcon(5, subtitleImportButton.getPosition().x + 170, subtitleImportButton.getPosition().y + 50, 10, DARKTURQOUISE);
+		break;
+	case FileStatus::ProcessComplete:
+		setupDisplayText(promptText, "Subtitle Generation Complete!", 20);
+		promptText.SetColor(PALEGREEN);
+		GuiDrawIcon(5, subtitleImportButton.getPosition().x + 170, subtitleImportButton.getPosition().y + 50, 10, PALEGREEN);
+		break;
+	case FileStatus::ProcessFailed:
+		setupDisplayText(promptText, "Oops something went wrong! :(", 20);
+		promptText.SetColor(CORAL);
+		GuiDrawIcon(5, subtitleImportButton.getPosition().x + 170, subtitleImportButton.getPosition().y + 50, 10, CORAL);
+		break;
+	default:
+		break;
 	}
-	else
-	{
-		frameImage = LoadImageFromTexture(frame);
-		ImageResize(&frameImage, subtitleImportButton.getSize().x, subtitleImportButton.getSize().y);
-		frame = LoadTextureFromImage(frameImage);
-		DrawTexture(frame, subtitleImportButton.getPosition().x, subtitleImportButton.getPosition().y, WHITE);
-	}
+	promptText.Draw({ 190, 620 });
 
 	GuiDrawIcon(2, outDirBoxButton.getPosition().x + 5, outDirBoxButton.getPosition().y + 5, 2, MTEXT);
 
@@ -94,11 +109,7 @@ void SubtitleWindowGUI::HandleEvents()
 		{
 			std::cout << outPath << std::endl;
 			subtitleInputPath = outPath;
-			std::string mpegFile = StringUtils::extractFileName(subtitleInputPath) + ".mpeg";
-			VideoUtils::ConvertToMpeg(subtitleInputPath, mpegFile);
-			frame = VideoUtils::GetFrameFromVideo(mpegFile);
-			displayVideoFrame = true;
-			//std::cout << "Input File: " << outPath << std::endl;
+			fileStatus = FileStatus::FileReceived;
 		}
 		else if (result == NFD_CANCEL)
 		{
@@ -126,7 +137,8 @@ void SubtitleWindowGUI::HandleEvents()
 		{
 			std::cout << "Starting Subtitle Generation" << std::endl;
 
-			transcriber->BurnInSubtitles(subtitleInputPath.c_str(), outputDirPath.c_str());
+			bool result = transcriber->BurnInSubtitles(subtitleInputPath.c_str(), outputDirPath.c_str());
+			fileStatus = result ? FileStatus::ProcessComplete : FileStatus::ProcessFailed;
 		}
 	}
 
