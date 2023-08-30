@@ -84,7 +84,7 @@ void SubtitleWindowGUI::HandleEvents()
 	if (outDirBoxButton.isPressed())
 	{
 		//result = NFD_SaveDialog("mp4", NULL, &outPath);
-		result = NFD_PickFolder("", &outPath);
+		result = NFD_PickFolder(&outPath, NULL);
 
 		if (result == NFD_OKAY)
 		{
@@ -103,7 +103,7 @@ void SubtitleWindowGUI::HandleEvents()
 
 	if (subtitleImportButton.isPressed())
 	{
-		result = NFD_OpenDialog("mp4", NULL, &outPath);
+		result = NFD_OpenDialog(&outPath, nullptr, NULL, NULL);
 
 		if (result == NFD_OKAY)
 		{
