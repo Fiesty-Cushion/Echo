@@ -50,4 +50,6 @@ private:
 
 	int timestamp_to_sample(int64_t t, int n_samples);
 	std::string estimate_diarization_speaker(std::vector<std::vector<float>> pcmf32s, int64_t t0, int64_t t1, bool id_only = false);
+
+    const char* font_mono = "../assets/Fonts/VeraMono-Bold.ttf";
 };

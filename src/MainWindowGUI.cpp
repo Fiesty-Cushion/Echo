@@ -121,7 +121,15 @@ void MainWindowGUI::HandleEvents()
 		if (result == NFD_OKAY)
 		{
 			modelTextBox.inputText = outPath;
-			/*	MODEL_PATH = *outPath;*/
+			MODEL_PATH = outPath;
+			
+			if(transcriber != nullptr)
+				delete transcriber;
+				
+			if(audio == nullptr)
+				audio = new Audio();
+
+			transcriber = new Transcriber(*audio);
 		}
 		else if (result == NFD_CANCEL)
 		{

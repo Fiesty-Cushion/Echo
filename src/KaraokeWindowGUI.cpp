@@ -28,10 +28,6 @@ void KaraokeWindowGUI::Init()
 	nfdresult_t result;
 
 	setupDisplayText(karExportText, "Save File To");
-
-	audio = new Audio();
-	transcriber = new Transcriber(*audio);
-
 }
 
 void KaraokeWindowGUI::Draw()
@@ -129,18 +125,22 @@ void KaraokeWindowGUI::HandleEvents()
 			std::cout << "No Input File Selected" << std::endl;
 			return;
 		}
-		else if (outputDirPath == "")
+		if (outputDirPath == "")
 		{
 			std::cout << "No Output Directory Selected" << std::endl;
 			return;
 		}
-		else
+		if(transcriber == nullptr)
 		{
-			std::cout << "Starting Karaoke Generation" << std::endl;
-
-			bool result = transcriber->GenerateKaraoke(karaokeInputPath.c_str(), outputDirPath.c_str());
-			fileStatus = result ? FileStatus::ProcessComplete : FileStatus::ProcessFailed;
+			std::cout << "Transcriber not initialized" << std::endl;
+			return;
 		}
+		
+		std::cout << "Starting Karaoke Generation" << std::endl;
+
+		bool result = transcriber->GenerateKaraoke(karaokeInputPath.c_str(), outputDirPath.c_str());
+		fileStatus = result ? FileStatus::ProcessComplete : FileStatus::ProcessFailed;
+		
 	}
 
 }

@@ -35,14 +35,17 @@ void STTWindowGUI::HandleEvents()
 	//....Event Handlers....//
 	if (transcribeButton.isPressed())
 	{
+		if(transcriber == nullptr)
+		{
+			std::cout << "Transcriber not initialized" << std::endl;
+			return;
+		}
 		isTranscribing = !isTranscribing;
 
 		// only start the stream once
 		if (isInitialClick)
 		{
-			audio = new Audio();
 			audio->StartStream(RealTime);
-			transcriber = new Transcriber(*audio);
 			isInitialClick = false;
 		}
 
@@ -67,6 +70,5 @@ void STTWindowGUI::HandleEvents()
 
 void STTWindowGUI::ShutDown()
 {
-	delete audio;
-	delete transcriber;
+
 }

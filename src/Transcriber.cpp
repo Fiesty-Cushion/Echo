@@ -325,12 +325,10 @@ bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir)
     // script to generate karaoke video
     fprintf(stderr, "%s:Generating script: '%s'\n", __func__, outputScript.c_str());
 
-    static const char* font = "./Resources/Fonts/VeraMono-Bold.ttf";
-
-    std::ifstream fin(font);
+    std::ifstream fin(font_mono);
     if (!fin.is_open())
     {
-        fprintf(stderr, "%s: font not found at '%s', please specify a monospace font with -fp\n", __func__, font);
+        fprintf(stderr, "%s: font not found at '%s', please specify a monospace font with -fp\n", __func__, font_mono);
         return false;
     }
     // -f specifies format size, color, duration and framerate
@@ -362,7 +360,7 @@ bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir)
         }
 
         // background text
-        fout << "drawtext=fontfile='" << font << "':fontsize=24:fontcolor=gray:x=(w-text_w)/2:y=h/2:text='':enable='between(t," << t0 / 100.0 << "," << t0 / 100.0 << ")'";
+        fout << "drawtext=fontfile='" << font_mono << "':fontsize=24:fontcolor=gray:x=(w-text_w)/2:y=h/2:text='':enable='between(t," << t0 / 100.0 << "," << t0 / 100.0 << ")'";
 
         bool is_first = true;
         std::string speaker = "";
@@ -440,15 +438,15 @@ bool Transcriber::GenerateKaraoke(const char* inputPath, const char* outputDir)
             if (is_first)
             {
                 // background text
-                fout << ",drawtext=fontfile='" << font << "':fontsize=24:fontcolor=gray:x=(w-text_w)/2:y=h/2:text='" << txt_bg << "':enable='between(t," << t0 / 100.0 << "," << t1 / 100.0 << ")'";
+                fout << ",drawtext=fontfile='" << font_mono << "':fontsize=24:fontcolor=gray:x=(w-text_w)/2:y=h/2:text='" << txt_bg << "':enable='between(t," << t0 / 100.0 << "," << t1 / 100.0 << ")'";
                 is_first = false;
             }
 
             // foreground text
-            fout << ",drawtext=fontfile='" << font << "':fontsize=24:fontcolor=lightgreen:x=(w-text_w)/2+8:y=h/2:text='" << txt_fg << "':enable='between(t," << token.t0 / 100.0 << "," << token.t1 / 100.0 << ")'";
+            fout << ",drawtext=fontfile='" << font_mono << "':fontsize=24:fontcolor=lightgreen:x=(w-text_w)/2+8:y=h/2:text='" << txt_fg << "':enable='between(t," << token.t0 / 100.0 << "," << token.t1 / 100.0 << ")'";
 
             // underline
-            fout << ",drawtext=fontfile='" << font << "':fontsize=24:fontcolor=lightgreen:x=(w-text_w)/2+8:y=h/2+16:text='" << txt_ul << "':enable='between(t," << token.t0 / 100.0 << "," << token.t1 / 100.0 << ")'";
+            fout << ",drawtext=fontfile='" << font_mono << "':fontsize=24:fontcolor=lightgreen:x=(w-text_w)/2+8:y=h/2+16:text='" << txt_ul << "':enable='between(t," << token.t0 / 100.0 << "," << token.t1 / 100.0 << ")'";
         }
     }
     //- c:v libx264 sets H.264 video codec for compression
@@ -508,12 +506,10 @@ bool Transcriber::BurnInSubtitles(const char* inputPath, const char* outputDir)
     // script to generate burned in subtitles
     fprintf(stderr, "%s:Generating script: '%s'\n", __func__, outputScript.c_str());
 
-    static const char* font = "./Resources/Fonts/VeraMono-Bold.ttf";
-
-    std::ifstream fin(font);
+    std::ifstream fin(font_mono);
     if (!fin.is_open())
     {
-        fprintf(stderr, "%s: font not found at '%s', please specify a monospace font with -fp\n", __func__, font);
+        fprintf(stderr, "%s: font not found at '%s', please specify a monospace font with -fp\n", __func__, font_mono);
         return false;
     }
     // -i input file
@@ -542,7 +538,7 @@ bool Transcriber::BurnInSubtitles(const char* inputPath, const char* outputDir)
         {
             fout << ",";
         }
-        fout << "drawtext=fontfile='" << font << "':fontsize=26:fontcolor=#FFFFCC:x=(w-text_w)/2:y=" << height - y_offset << ":text = '' : enable = 'between(t," << t0 / 100.0 << "," << t0 / 100.0 << ")'";
+        fout << "drawtext=fontfile='" << font_mono << "':fontsize=26:fontcolor=#FFFFCC:x=(w-text_w)/2:y=" << height - y_offset << ":text = '' : enable = 'between(t," << t0 / 100.0 << "," << t0 / 100.0 << ")'";
 
         bool is_first = true;
         std::string speaker = "";
@@ -590,7 +586,7 @@ bool Transcriber::BurnInSubtitles(const char* inputPath, const char* outputDir)
             if (is_first)
             {
                 // applying draw filters in subtitles text
-                fout << ",drawtext=fontfile='" << font << "':fontsize=26:fontcolor=#FFFFCC:x=(w-text_w)/2:y=" << height - y_offset << ":text='" << subs_text << "':enable='between(t," << t0 / 100.0 << "," << t1 / 100.0 << ")'";
+                fout << ",drawtext=fontfile='" << font_mono << "':fontsize=26:fontcolor=#FFFFCC:x=(w-text_w)/2:y=" << height - y_offset << ":text='" << subs_text << "':enable='between(t," << t0 / 100.0 << "," << t1 / 100.0 << ")'";
                 is_first = false;
             }
         }

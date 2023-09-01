@@ -29,8 +29,6 @@ void SubtitleWindowGUI::Init()
 	nfdresult_t result;
 
 	setupDisplayText(srtExportText, "Save File To");
-	audio = new Audio();
-	transcriber = new Transcriber(*audio);
 }
 
 void SubtitleWindowGUI::Draw()
@@ -128,18 +126,21 @@ void SubtitleWindowGUI::HandleEvents()
 			std::cout << "No Input File Selected" << std::endl;
 			return;
 		}
-		else if (outputDirPath == "")
+		if (outputDirPath == "")
 		{
 			std::cout << "No Output Directory Selected" << std::endl;
 			return;
 		}
-		else
+		if(transcriber == nullptr)
 		{
-			std::cout << "Starting Subtitle Generation" << std::endl;
-
-			bool result = transcriber->BurnInSubtitles(subtitleInputPath.c_str(), outputDirPath.c_str());
-			fileStatus = result ? FileStatus::ProcessComplete : FileStatus::ProcessFailed;
+			std::cout << "Transcriber not initialized" << std::endl;
+			return;
 		}
+		std::cout << "Starting Subtitle Generation" << std::endl;
+
+		bool result = transcriber->BurnInSubtitles(subtitleInputPath.c_str(), outputDirPath.c_str());
+		fileStatus = result ? FileStatus::ProcessComplete : FileStatus::ProcessFailed;
+		
 	}
 
 }

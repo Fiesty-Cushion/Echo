@@ -37,9 +37,6 @@ private:
 
 	FileStatus fileStatus = FileStatus::Default;
 
-	Audio* audio;
-	Transcriber* transcriber;
-
 	void setupDisplayText(raylib::Text& text, std::string message, int fontSize = 32, raylib::Font& font = m_font)
 	{
 		text.SetText(message);

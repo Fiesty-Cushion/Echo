@@ -15,9 +15,6 @@ private:
 	bool isInitialClick = true;
 	bool isTranscribing = false;
 
-	Audio* audio;
-	Transcriber* transcriber;
-
 	Button transcribeButton;
 
 	TextBox outputTextBox;

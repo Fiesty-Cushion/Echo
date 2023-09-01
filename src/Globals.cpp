@@ -17,8 +17,9 @@ std::vector<float> pcm32_input;
 std::condition_variable bufferCV;
 std::mutex bufferMutex;
 std::string transcribedText = "";
-//Audio* audio = nullptr;
-//Transcriber* transcriber = nullptr;
+std::string MODEL_PATH;
+Audio* audio = nullptr;
+Transcriber* transcriber = nullptr;
 
 
 raylib::Font m_font;
