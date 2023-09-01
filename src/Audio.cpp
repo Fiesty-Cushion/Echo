@@ -7,6 +7,8 @@
 #include "Globals.h"
 #include "Audio.h"
 #include "Modes.h"
+#include <queue>
+#include <vector>
 
 int MyRealTimeCallback(const void* inputBuffer, void* outputBuffer,
 	unsigned long framesPerBuffer,

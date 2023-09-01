@@ -8,6 +8,8 @@
 #include <raylib-cpp/Text.hpp>
 #include <portaudio.h>
 #include "Transcriber.h"
+#include <vector>
+#include <condition_variable>
 
 
 #define MGRAY CLITERAL(Color) {225, 225, 225, 255}

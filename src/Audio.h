@@ -2,6 +2,7 @@
 #include <queue>
 #include <mutex>
 #include <portaudio.h>
+#include <condition_variable>
 
 #include "Modes.h"
 

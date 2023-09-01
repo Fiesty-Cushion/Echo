@@ -116,7 +116,7 @@ void MainWindowGUI::HandleEvents()
 
 	if (modelTextBoxButton.isPressed())
 	{
-		result = NFD_OpenDialog("bin", NULL, &outPath);
+		result = NFD_OpenDialog(&outPath, nullptr, NULL, NULL);
 
 		if (result == NFD_OKAY)
 		{

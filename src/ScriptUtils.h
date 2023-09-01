@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include <cstdlib>
 #include "StringUtils.h"
 
 #ifdef _WIN32 // Check if compiling for Windows
@@ -13,12 +14,13 @@
 #define PATH_SEPARATOR '/'
 #endif
 
+
 class ScriptUtils
 {
 public:
     static bool RunScriptFromCurrentDir(const std::string script)
     {
-        char buffer[_MAX_PATH];
+        char buffer[260];
         if (GetCurrentDir(buffer, sizeof(buffer)) == nullptr)
         {
             std::cerr << "Error getting current directory" << std::endl;

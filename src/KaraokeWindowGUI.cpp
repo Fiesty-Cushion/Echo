@@ -80,10 +80,10 @@ void KaraokeWindowGUI::Draw()
 void KaraokeWindowGUI::HandleEvents()
 {
 	// What to do when this button is Pressed?
+
 	if (outDirBoxButton.isPressed())
 	{
-		result = NFD_PickFolder("", &outPath);
-
+		result = NFD_PickFolder(&outPath, NULL);
 
 		if (result == NFD_OKAY)
 		{
@@ -103,7 +103,7 @@ void KaraokeWindowGUI::HandleEvents()
 
 	if (karaokeImportButton.isPressed())
 	{
-		result = NFD_OpenDialog("wav", NULL, &outPath);
+		result = NFD_OpenDialog(&outPath, nullptr, NULL, NULL);
 
 		if (result == NFD_OKAY)
 		{
