@@ -20,4 +20,4 @@ mingw32-make
 ./Echo.exe
 ```
 
-**To run this you have to download a Language Model from <https://ggml.ggerganov.com/> and place it under `Models/` folder on root directory.**
+**To run this you have to download a Language Model from <https://ggml.ggerganov.com/ggml-model-whisper-base.en.bin> and place it under `Models/` folder on root directory.**
