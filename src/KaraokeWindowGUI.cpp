@@ -103,8 +103,7 @@ void KaraokeWindowGUI::HandleEvents()
 
 	if (karaokeImportButton.isPressed())
 	{
-		const nfdnfilteritem_t* filterList = nullptr;
-		result = NFD_OpenDialog(&outPath, filterList, NULL, NULL);
+		result = NFD_OpenDialog(&outPath, nullptr, NULL, NULL);
 
 		if (result == NFD_OKAY)
 		{
