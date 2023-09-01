@@ -45,7 +45,7 @@ extern raylib::Font m_font;
 extern raylib::Font raygui_font;
 extern raylib::Font m_font_title;
 
-const std::string m_font_path = "../Resources/Fonts/monogram.ttf";
+const std::string m_font_path = "../assets/Fonts/monogram.ttf";
 const std::string MODEL_PATH = "../Models/ggml-model-whisper-base.en.bin";
 
 // CallBack Function for PortAudio
