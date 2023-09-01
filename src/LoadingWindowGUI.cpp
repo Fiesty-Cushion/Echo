@@ -16,7 +16,7 @@ void LoadingWindowGUI::Init()
 	InitWindow(screenWidth, screenHeight, "Echo - Loading Screen");
 	SetTargetFPS(120);
 
-	plm = plm_create_with_filename("../Resources/Intro.mpeg");
+	plm = plm_create_with_filename("../assets/Intro.mpeg");
 
 	if (!plm)
 	{
