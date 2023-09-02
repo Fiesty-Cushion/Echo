@@ -45,7 +45,7 @@ void STTWindowGUI::HandleEvents()
 		// only start the stream once
 		if (isInitialClick)
 		{
-			audio->StartStream(RealTime);
+			transcriber->BeginStreaming();
 			isInitialClick = false;
 		}
 

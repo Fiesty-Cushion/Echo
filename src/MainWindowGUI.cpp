@@ -121,15 +121,15 @@ void MainWindowGUI::HandleEvents()
 		if (result == NFD_OKAY)
 		{
 			modelTextBox.inputText = outPath;
-			MODEL_PATH = outPath;
 			
 			if(transcriber != nullptr)
 				delete transcriber;
 				
-			if(audio == nullptr)
-				audio = new Audio();
-
-			transcriber = new Transcriber(*audio);
+			transcriber = Transcriber::Create(outPath);
+			// TODO : Handle invalid input
+			if(transcriber == nullptr){
+				std::cout << "Transcriber initialization failed. Make sure path is correct." << std::endl;
+			}
 		}
 		else if (result == NFD_CANCEL)
 		{
@@ -184,5 +184,6 @@ void MainWindowGUI::HandleEvents()
 void MainWindowGUI::ShutDown()
 {
 	m_font.Unload();
+	delete transcriber;
 	delete window;
 }

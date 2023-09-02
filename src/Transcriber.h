@@ -22,22 +22,24 @@ struct transcribed_msg {
 class Transcriber
 {
 public:
-	Transcriber(Audio& aud);
-
 	void AddAudioData(const std::vector<float>& new_data);
 	std::vector<transcribed_msg> GetTranscribed();
 	bool GenerateKaraoke(const char* inputPath, const char* outputDir);
 	bool BurnInSubtitles(const char* inputPath, const char* outputDir);
+	void BeginStreaming();
 
 	~Transcriber();
 
+	// Factory method
+	static Transcriber* Create(std::string modelPath);
+
 private:
-	Audio& audio;
+	Audio audio;
+	Transcriber(struct whisper_context* stt_ctx, struct whisper_context* karaoke_ctx, struct whisper_context* subtitles_ctx);
 
 	struct whisper_context* ctx;
 	struct whisper_context* karaoke_ctx;
 	struct whisper_context* subtitles_ctx;
-
 
 	std::atomic<bool> is_running;
 	std::vector<float> s_queued_pcmf32;

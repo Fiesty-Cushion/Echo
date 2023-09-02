@@ -78,12 +78,8 @@ bool vad_simple(std::vector<float>& pcmf32, int sample_rate, int last_ms, float 
     return true;
 }
 
-Transcriber::Transcriber(Audio& aud) : audio(aud)
-{
-    ctx = whisper_init_from_file(MODEL_PATH.c_str());
-    karaoke_ctx = whisper_init_from_file(MODEL_PATH.c_str());
-    subtitles_ctx = whisper_init_from_file(MODEL_PATH.c_str());
- 
+Transcriber::Transcriber(struct whisper_context* stt_ctx, struct whisper_context* karaoke_ctx, struct whisper_context* subtitles_ctx) : ctx(stt_ctx), karaoke_ctx(karaoke_ctx), subtitles_ctx(subtitles_ctx)
+{ 
     is_running = true;
     worker = std::thread(&Transcriber::Run, this);
     t_last_iter = std::chrono::high_resolution_clock::now();
@@ -97,6 +93,23 @@ Transcriber::~Transcriber()
     whisper_free(ctx);
     whisper_free(karaoke_ctx);
     whisper_free(subtitles_ctx);
+}
+
+Transcriber *Transcriber::Create(std::string modelPath)
+{
+    struct whisper_context* stt_context = whisper_init_from_file(modelPath.c_str());
+    struct whisper_context* karaoke_context = whisper_init_from_file(modelPath.c_str());
+    struct whisper_context* subtitles_context = whisper_init_from_file(modelPath.c_str());
+
+    if(stt_context != nullptr && karaoke_context != nullptr && subtitles_context != nullptr)
+    {
+        return new Transcriber(stt_context, karaoke_context, subtitles_context);
+    }
+
+    whisper_free(stt_context);
+    whisper_free(karaoke_context);
+    whisper_free(subtitles_context);
+    return nullptr;
 }
 
 /** Add audio data in PCM f32 format. */
@@ -605,4 +618,9 @@ bool Transcriber::BurnInSubtitles(const char* inputPath, const char* outputDir)
     }
 
     return result;
+}
+
+void Transcriber::BeginStreaming()
+{
+    audio.StartStream(RealTime);
 }
