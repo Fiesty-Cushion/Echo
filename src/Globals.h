@@ -35,7 +35,6 @@ extern std::queue<std::vector<float>> pcm32_bufferQueue;
 extern std::vector<float> pcm32_input;
 extern std::condition_variable bufferCV;
 extern std::mutex bufferMutex;
-extern Audio* audio;
 extern Transcriber* transcriber;
 
 extern std::string transcribedText;
@@ -46,7 +45,6 @@ extern raylib::Font raygui_font;
 extern raylib::Font m_font_title;
 
 const std::string m_font_path = "../assets/Fonts/monogram.ttf";
-extern std::string MODEL_PATH;
 
 // CallBack Function for PortAudio
 extern int MyRealTimeCallback(const void* inputBuffer, void* outputBuffer,
