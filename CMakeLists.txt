@@ -32,8 +32,15 @@ target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE} ${PROJECT_EXTERNAL_INCLUDE} ${raylib_INCLUDE} ${whisper_INCLUDE} ${portaudio_INCLUDE} ${nfd_INCLUDE})
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib whisper portaudio nfd)
 
+# Determine the appropriate library file extension based on the platform
+if(WIN32)
+    set(LIB_EXTENSION ".dll")
+else()
+    set(LIB_EXTENSION ".so")
+endif()
+
 # Copying the portaudio dll to the build directory
 add_custom_command(TARGET Echo POST_BUILD       
     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        "${PROJECT_SOURCE_DIR}/external/portaudio/portaudio-build/libportaudio.dll"     
+        "${PROJECT_SOURCE_DIR}/external/portaudio/portaudio-build/libportaudio${LIB_EXTENSION}"     
         $<TARGET_FILE_DIR:Echo>)                
