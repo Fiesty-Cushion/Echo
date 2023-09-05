@@ -41,11 +41,12 @@ public:
 
 		return directory + fileName;
 	}
-	static std::string GetFileExtension(const std::string& input) {
-    size_t lastDotPos = input.find_last_of(".");
-    if (lastDotPos != std::string::npos) {
-        return input.substr(lastDotPos + 1);
-    }
-    return ""; // No file extension found
-}
+	static std::string GetFileExtension(const std::string& input)
+	{
+    	size_t lastDotPos = input.find_last_of(".");
+    	if (lastDotPos != std::string::npos) {
+    	    return input.substr(lastDotPos + 1);
+    	}
+    	return ""; // No file extension found
+	}
 };
