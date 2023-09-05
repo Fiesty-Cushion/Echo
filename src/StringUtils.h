@@ -23,7 +23,7 @@ public:
 			s.insert(pos, replace);
 		}
 	}
-	static std::string extractFileName(const std::string& input)
+	static std::string ExtractFileName(const std::string& input)
 	{
 		size_t lastSlashPos = input.find_last_of("/\\");
 		size_t startPos = (lastSlashPos != std::string::npos) ? (lastSlashPos + 1) : 0;
@@ -31,7 +31,7 @@ public:
 		size_t endPos = (lastDotPos != std::string::npos && lastDotPos > startPos) ? lastDotPos : input.length();
 		return input.substr(startPos, endPos - startPos);
 	}
-	static std::string joinPaths(const std::string& directory, const std::string& fileName)
+	static std::string JoinPaths(const std::string& directory, const std::string& fileName)
 	{
 		char lastChar = directory.back();
 		if (lastChar != '/' && lastChar != '\\')
@@ -40,5 +40,13 @@ public:
 		}
 
 		return directory + fileName;
+	}
+	static std::string GetFileExtension(const std::string& input)
+	{
+    	size_t lastDotPos = input.find_last_of(".");
+    	if (lastDotPos != std::string::npos) {
+    	    return input.substr(lastDotPos + 1);
+    	}
+    	return ""; // No file extension found
 	}
 };
