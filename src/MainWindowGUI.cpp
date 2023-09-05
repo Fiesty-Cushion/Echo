@@ -18,9 +18,7 @@ void MainWindowGUI::Init()
 	SetTargetFPS(120);
 
 	screen = RealTime_Screen;
-
 	m_font = raylib::Font(m_font_path);
-	std::system("pwd");
 	GenTextureMipmaps(&m_font.texture);
 	SetTextureFilter(m_font.texture, TEXTURE_FILTER_ANISOTROPIC_8X);
 
@@ -112,6 +110,8 @@ void MainWindowGUI::Draw()
 void MainWindowGUI::HandleEvents()
 {
 	modelTextBox.Update();
+	modelPath = modelTextBox.inputText;
+
 	dropdownList.Update();
 
 	if (modelTextBoxButton.isPressed())
@@ -121,11 +121,12 @@ void MainWindowGUI::HandleEvents()
 		if (result == NFD_OKAY)
 		{
 			modelTextBox.inputText = outPath;
+			modelPath = outPath;
 			
 			if(transcriber != nullptr)
 				delete transcriber;
 				
-			transcriber = Transcriber::Create(outPath);
+			transcriber = Transcriber::Create(modelPath);
 			// TODO : Handle invalid input
 			if(transcriber == nullptr){
 				std::cout << "Transcriber initialization failed. Make sure path is correct." << std::endl;

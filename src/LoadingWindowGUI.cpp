@@ -20,6 +20,7 @@ void LoadingWindowGUI::Init()
 
 	if (!plm)
 	{
+		std::system("pwd");
 		std::cerr << "Loading Window Path Not Found !!!" << std::endl;
 		std::exit(-1);
 	}

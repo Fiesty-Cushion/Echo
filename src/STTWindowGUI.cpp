@@ -37,8 +37,10 @@ void STTWindowGUI::HandleEvents()
 	{
 		if(transcriber == nullptr)
 		{
-			std::cout << "Transcriber not initialized" << std::endl;
-			return;
+			//std::cout << "Transcriber not initialized" << std::endl;
+			//return;
+			transcriber = Transcriber::Create(modelPath);
+			std::cout << "Model Path: " << modelPath << std::endl;
 		}
 		isTranscribing = !isTranscribing;
 

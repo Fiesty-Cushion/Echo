@@ -38,6 +38,7 @@ extern std::mutex bufferMutex;
 extern Transcriber* transcriber;
 
 extern std::string transcribedText;
+extern std::string modelPath;
 
 //Load the Deafult font
 extern raylib::Font m_font;
