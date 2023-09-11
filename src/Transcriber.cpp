@@ -14,7 +14,8 @@
 #include <iostream>
 
 #define M_PI 3.1415
-
+Transcriber* Transcriber::instance = nullptr;
+std::string Transcriber::currentPath = "";
 
 void high_pass_filter(std::vector<float>& data, float cutoff, float sample_rate)
 {
@@ -95,11 +96,27 @@ Transcriber::~Transcriber()
     whisper_free(subtitles_ctx);
 }
 
-Transcriber *Transcriber::Create(std::string modelPath)
+Transcriber *Transcriber::GetInstance()
 {
-    struct whisper_context* stt_context = whisper_init_from_file(modelPath.c_str());
-    struct whisper_context* karaoke_context = whisper_init_from_file(modelPath.c_str());
-    struct whisper_context* subtitles_context = whisper_init_from_file(modelPath.c_str());
+     // If there is no existing instance or the model path has changed, we need to create or replace the instance
+    if (instance == nullptr || currentPath != modelPath) {
+        currentPath = modelPath;
+        delete instance;
+        instance = Transcriber::createInstance();
+
+        if (instance == nullptr) {
+            std::cerr << "Failed to create an instance of Transcriber. Make sure the model path is correct." << std::endl;
+        }
+    }
+
+    return instance;
+}
+
+Transcriber *Transcriber::createInstance()
+{
+    struct whisper_context* stt_context = whisper_init_from_file(currentPath.c_str());
+    struct whisper_context* karaoke_context = whisper_init_from_file(currentPath.c_str());
+    struct whisper_context* subtitles_context = whisper_init_from_file(currentPath.c_str());
 
     if(stt_context != nullptr && karaoke_context != nullptr && subtitles_context != nullptr)
     {

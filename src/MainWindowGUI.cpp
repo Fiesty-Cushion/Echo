@@ -122,15 +122,6 @@ void MainWindowGUI::HandleEvents()
 		{
 			modelTextBox.inputText = outPath;
 			modelPath = outPath;
-			
-			if(transcriber != nullptr)
-				delete transcriber;
-				
-			transcriber = Transcriber::Create(modelPath);
-			// TODO : Handle invalid input
-			if(transcriber == nullptr){
-				std::cout << "Transcriber initialization failed. Make sure path is correct." << std::endl;
-			}
 		}
 		else if (result == NFD_CANCEL)
 		{
@@ -185,6 +176,6 @@ void MainWindowGUI::HandleEvents()
 void MainWindowGUI::ShutDown()
 {
 	m_font.Unload();
-	delete transcriber;
+	delete Transcriber::GetInstance();
 	delete window;
 }

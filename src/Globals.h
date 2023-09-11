@@ -35,7 +35,6 @@ extern std::queue<std::vector<float>> pcm32_bufferQueue;
 extern std::vector<float> pcm32_input;
 extern std::condition_variable bufferCV;
 extern std::mutex bufferMutex;
-extern Transcriber* transcriber;
 
 extern std::string transcribedText;
 extern std::string modelPath;

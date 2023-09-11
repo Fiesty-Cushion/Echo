@@ -130,11 +130,9 @@ void KaraokeWindowGUI::HandleEvents()
 			std::cout << "No Output Directory Selected" << std::endl;
 			return;
 		}
+		Transcriber* transcriber = Transcriber::GetInstance();
 		if(transcriber == nullptr)
-		{
-			std::cout << "Transcriber not initialized" << std::endl;
 			return;
-		}
 		
 		std::cout << "Starting Karaoke Generation" << std::endl;
 
