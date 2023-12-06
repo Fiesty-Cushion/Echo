@@ -131,11 +131,10 @@ void SubtitleWindowGUI::HandleEvents()
 			std::cout << "No Output Directory Selected" << std::endl;
 			return;
 		}
+		Transcriber* transcriber = Transcriber::GetInstance();
 		if(transcriber == nullptr)
-		{
-			std::cout << "Transcriber not initialized" << std::endl;
 			return;
-		}
+			
 		std::cout << "Starting Subtitle Generation" << std::endl;
 
 		bool result = transcriber->BurnInSubtitles(subtitleInputPath.c_str(), outputDirPath.c_str());

@@ -35,13 +35,10 @@ void STTWindowGUI::HandleEvents()
 	//....Event Handlers....//
 	if (transcribeButton.isPressed())
 	{
+		Transcriber* transcriber = Transcriber::GetInstance();
 		if(transcriber == nullptr)
-		{
-			//std::cout << "Transcriber not initialized" << std::endl;
-			//return;
-			transcriber = Transcriber::Create(modelPath);
-			std::cout << "Model Path: " << modelPath << std::endl;
-		}
+			return;
+		
 		isTranscribing = !isTranscribing;
 
 		// only start the stream once
@@ -60,6 +57,10 @@ void STTWindowGUI::HandleEvents()
 
 	if (isTranscribing)
 	{
+		Transcriber* transcriber = Transcriber::GetInstance();
+		if(transcriber == nullptr)
+			return;
+			
 		const std::vector<transcribed_msg>& transcribedData = transcriber->GetTranscribed();
 		if (!transcribedData.empty())
 		{

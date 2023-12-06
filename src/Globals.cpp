@@ -18,8 +18,6 @@ std::condition_variable bufferCV;
 std::mutex bufferMutex;
 std::string transcribedText = "";
 std::string modelPath = "";
-Transcriber* transcriber = nullptr;
-
 
 raylib::Font m_font;
 raylib::Font raygui_font;

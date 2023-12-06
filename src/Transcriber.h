@@ -30,10 +30,13 @@ public:
 
 	~Transcriber();
 
-	// Factory method
-	static Transcriber* Create(std::string modelPath);
+	static Transcriber* GetInstance();
 
 private:
+	static Transcriber* instance;
+	static std::string currentPath; // path to currently loaded model
+	static Transcriber* createInstance();
+
 	Audio audio;
 	Transcriber(struct whisper_context* stt_ctx, struct whisper_context* karaoke_ctx, struct whisper_context* subtitles_ctx);
 
